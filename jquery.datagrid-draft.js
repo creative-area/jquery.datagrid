@@ -1,5 +1,8 @@
 /**
  * datagrid (jQuery plugin)
+ * Version: draft 0.3.1
+ * - add methods get / set option
+ * Released: 2013-10-04
  * Version: draft 0.3
  * - source param
  * Released: 2013-03-01
@@ -72,7 +75,7 @@
 			
 			var params = {};
 				params[ settings.paramsMapping.page ] = 1;
-				params[ settings.paramsMapping.paging ] = 0; // 0 for no paging
+				params[ settings.paramsMapping.paging ] = 15; // 0 for no paging
 				params[ settings.paramsMapping.orderby ] = "";
 				params[ settings.paramsMapping.direction ] = "";
 				params = $.extend( params, settings.paramsDefault );
@@ -99,6 +102,14 @@
 			
 			// PUBLIC METHODS
 			
+			// get / set option
+			datagrid.getOption = function( option ) {
+				return settings[ option ];
+			}
+			datagrid.setOption = function( option, value ) {
+				settings[ option ] = value;
+			}
+
 			// get / set page
 			datagrid.getPage = function() {
 				return params[ settings.paramsMapping.page ];

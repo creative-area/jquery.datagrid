@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	<meta charset="utf-8">
+	<title>jQuery Datagrid Draft</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="jQuery Datagrid">
+	<meta name="author" content="Creative Area">
+	
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
+	
+	<script type="text/javascript" src="../jquery.datagrid-draft.js"></script>
+	<script type="text/javascript" src="../plugins/jquery.datagrid.bootstrap3.js"></script>
+
+	<script type="text/javascript" src="demo.js"></script>
+	
+	<script type="text/javascript">
+	$( document ).ready( function() {
+		var dgc = $( "#dg-country" ).datagrid({
+			url: "data/demo-simple.php",
+			col: [{
+				field: "Code",
+				title: "Code",
+				sortable: true
+			},{
+				field: "Name",
+				title: "Name",
+				sortable: true
+			},{
+				field: "Population",
+				title: "Population",
+				sortable: true
+			},{
+				field: "SurfaceArea",
+				title: "Surface",
+				sortable: true
+			},{
+				field: "Continent",
+				title: "Continent",
+				sortable: true
+			}],
+			attr: { "class": "table table-bordered table-condensed" },
+			sorter: "bootstrap",
+			pager: "bootstrap"
+		});
+	});
+	</script>
+	
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.min.css" rel="stylesheet">
+	
+	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	
+	<style>
+	a { cursor: pointer;}
+	.dg div span { cursor: pointer;}
+	</style>
+	</head>
+	
+	<body>
+		<div class="container">
+			<h1>jQuery datagrid demo <small>simple</small></h1>
+
+			<div id="dg-country" class="dg"></div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">Options used</div>
+				<div class="panel-body">
+					<dl class="dl-horizontal-">
+						<dt>url</dt>
+						<dd>
+							<code>"data/demo-simple.php"</code> server url. post data : <code>page</code>, <code>paging</code>, <code>orderby</code> and <code>direction</code>
+						</dd>
+						<dt>col</dt>
+						<dd>
+							<code>[ {field:"fieldname", title:"title", sortable:true}, {...}, ... ]</code> columns definition with title, field name and sortable activated
+						</dd>
+						<dt>attr</dt>
+						<dd>
+							<code>{"class":"table table-striped table-bordered table-condensed"}</code> table attributes set by <code>$.attr()</code>
+						</dd>
+						<dt>sorter</dt>
+						<dd>
+							<code>"bootstrap"</code> plugin used to display sort icon
+						</dd>
+						<dt>pager</dt>
+						<dd>
+							<code>"bootstrap"</code> plugin used to display pagination
+						</dd>
+					</dl>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
