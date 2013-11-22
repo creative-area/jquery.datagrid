@@ -1,11 +1,8 @@
 jquery.datagrid
 ===============
 
-## What datagrid do
-
 - Get data from source (ajax, deferred function)
-- Render a simple HTML Table
-- Easy to style (UI-less)
+- Render a simple HTML Table easy to style (UI-less)
 - Semi-automatic sorter and pager (you need to code server side)
 - Simple columns definition
 - Plugins for cell, pager and sorter renderers
@@ -18,25 +15,27 @@ Just load `jquery.datagrid-draft.js` in your page and do `var datagrid = $(conta
 
 A simple example
 
-	<script type="text/javascript" src="jquery.datagrid-draft.js"></script>
-	<script type="text/javascript">
-	$( document ).ready( function() {
-		var datagrid = $(container).datagrid({
-			url: "get-data-url",
-			col: [{
-				field: "name",
-				title: "Name",
-				sortable: true
-			},{
-				field: "age",
-				title: "Age",
-				render: function( data ) {
-					return "<strong>" + data.value + "<strong>";
-				}
-			}]
-		})
-	});	
-	</script>
+```html
+<script type="text/javascript" src="jquery.datagrid-draft.js"></script>
+<script type="text/javascript">
+$( document ).ready( function() {
+	var datagrid = $(container).datagrid({
+		url: "get-data-url",
+		col: [{
+			field: "name",
+			title: "Name",
+			sortable: true
+		},{
+			field: "age",
+			title: "Age",
+			render: function( data ) {
+				return "<strong>" + data.value + "<strong>";
+			}
+		}]
+	})
+});	
+</script>
+```
 
 ## Options
 
