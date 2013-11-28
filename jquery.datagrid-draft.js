@@ -1,8 +1,14 @@
 /**
  * datagrid (jQuery plugin)
+ * 
+ * Version: draft 0.3.2
+ * - add source plugin
+ * Released: 2013-11-28
+ * 
  * Version: draft 0.3.1
  * - add methods get / set option
  * Released: 2013-10-04
+ * 
  * Version: draft 0.3
  * - source param
  * Released: 2013-03-01
@@ -18,6 +24,7 @@
  */
 (function($){
 	var renderers = {
+		source: {},
 		sortable: {},
 		pager: {},
 		cell: {}
@@ -178,11 +185,19 @@
 					break;
 					
 					case "string":
-						if ( settings.source == "post" ) {
-							// post ajax source
-							$.post( settings.url, params, function( result ) {
-								datagrid.renderData( result );
-							} );
+						switch ( settings.source ) {
+							case "post":
+								// post ajax source
+								$.post( settings.url, params, function( result ) {
+									datagrid.renderData( result );
+								} );
+							break;
+
+							default:
+								if ( renderers.source[ settings.source ] ) {
+									renderers.source[ settings.source ].call( this, datagrid.getParams() );
+								}
+							break;
 						}
 					break;
 				}
