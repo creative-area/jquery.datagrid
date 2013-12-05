@@ -39,98 +39,162 @@ $( document ).ready( function() {
 
 ## Options
 
-Name				| Default value			| Description
- :--- 				| :--- 					| :---
-__*Get data*__		|
-`source`			| `"post"`				| Data fetching method: "post", function or plugin.
-`url` 				| `""` (empty string)	| Server url where data are fetch (with POST params data).
-`paramsDefault` 	| `{}`					| 
-`paramsMapping` 	| *see below*			| 
-`autoload` 			| `true`				| Auto load data. If set to `false`, you need to load manualy the data with `datagrid.getData()` method.
-__*Render data*__	|
-`col`				| `[]`					| Array of column definition objects. - *see __Column options__ below*
-`attr` 				| `false`				| An object of attribute-value pairs: generate the table element attributes.
-`noData` 			| `"no data"`			| `String`: it will be displayed instead of the table if there is no data. `Function`: the result returned by the function will be displayed.
-__*Plugins*__		|
-`sorter` 			| `false`				| Display text or icon on table header when columns are sorted (asc or desc). - *see __Plugins__ below*
-`pager`				| `"default"`			| Render the pager. `default` pager write page numbers in a `span`, all in a `div`. - *see __Plugins__ below*
-`pagerPosition` 	| `"bottom"`			| Display the pager on `"bottom"` of the `table`, or on the `"top"`, or both with `["top","bottom"]`.
-__*Events*__		|
-`onBefore` 			| `false`				| Callback `function()`. Scope is `datagrid`.
-`onSourceData` 		| `false`				| Callback `function( data )`
-`onData` 			| `false`				| Callback `function( { "total": Total number of data without paging, "data": data } )`
-`onRowData` 		| `false`				| Callback `function( data[ numrow ], numrow, $tr )`
-`onComplete` 		| `false`				| Callback `function()`. Scope is `datagrid`.
-
-#### Params Mapping (paramsMapping option)
-
-You can map param names used for paging and sorting. The defaults are:
-
 ```javascript
-paramsMapping = {
-	page: "page",
-	paging: "paging",
-	orderby: "orderby",
-	direction: "direction"
+// All options with default values
+{
+	source: "post",
+	url: "",
+	paramsDefault: {},
+	paramsMapping: {
+		page: "page",
+		paging: "paging",
+		orderby: "orderby",
+		direction: "direction"
+	},
+	autoload: true,
+	col: [],
+	attr: false,
+	noData: "no data",
+	sorter: false,
+	pager: "default",
+	pagerPosition: "bottom",
+	onBefore: false,
+	onSourceData: false,
+	onData: false,
+	onRowData: false,
+	onComplete: false
 }
 ```
 
-## Column options
+### Options detail
 
-Name				| Default value			| Description
- :--- 				| :--- 					| :---
-`field` 			| `""` (empty string)	| Field name
-`title` 			| `""` (empty string)	| Title display in the `th`content
-`attrHeader` 		| `{}`					| Param for `$(th).attr()`
-`attr` 				| `{}`					| Param for `$(td).attr()`
-`sortable` 			| `false`				| `true` activate column sort on `th` click
-`render` 			| `false`				| *see cell rendering below*
+List of `option names` ( *expected values* )
 
-# How to use it: the flow of data and events
+#### Get data
+
+- `source` ( *string* || *function* ) : data fetching method: "post", function or plugin name (string).
+- `url`  ( *string* ) : server url where data are fetch (with POST params data).
+- `paramsDefault` ( *object* ) : default params added to the data request.
+- `paramsMapping` ( *object* ) : you can map param names used for paging and sorting (keys used: see default value).
+- `autoload` ( *boolean* ) : auto load data. If set to `false`, you need to load manualy the data with `datagrid.getData()` method.
+
+#### Render data
+
+- `col`	( *array* ) : array of column definition objects. - *see __Column options__ below*
+- `attr` ( *false* || *object* ) : an object of attribute-value pairs: generate the table element attributes. `false` for no attributes.
+- `noData` ( *string* || *function* ) : `string`: it will be displayed instead of the table if there is no data. `function`: the result returned by the function will be displayed.
+
+#### Plugins
+
+- `sorter` ( *false* || *string* || *object* ) : display text or icon on table header when columns are sorted (asc or desc). - *see __Plugins__ below*
+- `pager` ( *false* || *string* || *object* ) : render the pager. `default` pager write page numbers in a `span`, all in a `div`. - *see __Plugins__ below*
+- `pagerPosition` ( *false* || *"top"* || *"bottom"* || *["top","bottom"]* ) : display the pager on `"bottom"` of the `table`, or on the `"top"`, or both with `["top","bottom"]`.
+
+#### Events
+
+- `onBefore` ( *false* || *function* ) : callback `function()`. Scope is `datagrid`.
+- `onSourceData` ( *false* || *function* ) : callback `function( data )`
+- `onData` ( *false* || *function* ) : callback `function( { "total": Total number of data without paging, "data": data } )`
+- `onRowData` ( *false* || *function* ) : callback `function( data[ numrow ], numrow, $tr )`
+- `onComplete` ( *false* || *function* ) : callback `function()`. Scope is `datagrid`.
+
+
+## Columns
+
+### Column options
+
+```javascript
+// All column options with default values
+{
+	field: "",			// Field name
+	title: "",			// Title display in the `th`content
+	attrHeader: {},		// Param for `$(th).attr()`
+	attr: {},			// Param for `$(td).attr()`
+	sortable: false,	// `true` activate column sort on `th` click
+	render: false		// *see cell rendering below*
+}
+```
+
+### Cell Rendering
+
+How to display `td` content depends on column `render` value:
+
+- `false` : display `field` value.
+- `"plugin-name"` : use a plugin registered with `plugin-name`.
+- `{ "plugin-name": params }` : use a plugin registered with `plugin-name`, with `params`.
+- `function( data )` : return content displayed in `td`. Scope is the `$(td)` in the callback. `data` is an object:
+
+```javascript
+data = {
+	value: "the value of the field key",
+	field: "the field key name",
+	row: "row data object (row.fieldname = value)", 
+	colindex: "column number (first is 0)"
+}
+```
+
+
+# Flow of data and events
 
 ## Get Data
 
-To get the data and launch the flow, you need to call `datagrid.getData( filters )`. It will be automatically executed with `option.autoload = true`.
+To get the data and launch the flow, you need to call `datagrid.getData( filters )` (it will be automatically executed with `option.autoload = true`).
 
-`onBefore` event is called (if defined).
+> `onBefore()` event is called (if defined). Scope in the callback is `datagrid`.
 
 `filters` is an object of attribute-value pairs. They are merged with paging and sorting params and send when fetching data.
 
-How data is fetch depends on `source` option.
+How data is fetch depends on `source` option:
 
-If `source = "post"` then `$.post( options.url )` is used to get data.
+- **"post"** : `$.post( options.url )` is used to get data.
 
-If `source` is a function, `$.when( options.source() )` is used. In the callback function, you get the params in first argument, and `this` is the `datagrid` object.
+- **function** : `$.when( options.source( params ) )` is used. Scope in the callback is `datagrid` object.
 
-If `source` is a string other than `"post"`, a plugin will be used (if it exists). *see __Source plugin__ below*
+- **string** (other than `"post"`) : a plugin will be used (if it exists). *see __Source plugin__ below*
 
-`onSourceData` event is called (if defined) when data is received. Data is passed as argument to the callback in is raw form.
+When data is fetched by the source, `datagrid.renderData( data )` is called. You can change data with the next event:
 
-## Data Format
+> `onSourceData( data )` event is called (if defined). Data is in raw form. Must return changed data.
 
-## Cell Rendering
+If returned data is a json string, it will be changed with `JSON.parse()`.
 
-## Methods
+#### Data Format
 
-`datagrid.getOption( option )`
+Data format expected to render the datagrid is an object like this:
+```javascript
+{
+	total: Number of rows (without pagination),
+	data: [{
+			"fieldname1": value1,
+			"fieldname2": value2,
+			...
+		},
+		{
+			"fieldname1": value3,
+			"fieldname2": value4,
+			...
+		}
+	}]
+}
+```
 
-`datagrid.setOption( option, value )`
 
-`datagrid.getPage()`
+# Methods
 
-`datagrid.setPage( page )`
+- `datagrid.getData( filters )` : fetch source and render data.
+- `datagrid.getOption( option )` : get option value.
+- `datagrid.setOption( option, value )` : set option value.
+- `datagrid.getPage()` : get page number (first page is 1).
+- `datagrid.setPage( page )` : set page number used in `getData()`.
+- `datagrid.getParams()` : get params used for data request.
+- `datagrid.getParamsUsed()` : get params used for data request (duplicate ?).
+- `datagrid.renderData( data )` : render data. Called internally when data are fetched.
+- `datagrid.addFilter( selector )` : define selected form element(s) (and his children) as automatic filters. *see __Filters__ below*
+- `datagrid.getPagerLimits( behavior, lastpage )` : helper method for pager plugin. *see __Pager plugin__ below*
 
-`datagrid.getParams()`
 
-`datagrid.getParamsUsed()`
+# Filters
 
-`datagrid.getPagerLimits( behavior, lastpage )`
-
-`datagrid.getData( filters )`
-
-`datagrid.renderData( data )`
-
-`datagrid.addFilter( selector )`
 
 # Plugins
 
