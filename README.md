@@ -182,7 +182,7 @@ Data format expected to render the datagrid is an object like this:
 
 HTML table is displayed with `datagrid.renderData( data )` method.
 
-> `onSourceData( data )` event is called (if defined). Data is in expected format. Must return changed data.
+> `onData( data )` event is called (if defined). Data is in expected format. Must return changed data.
 
 If a `sorter` plugin is defined, clic events are attached on `th` (if column `sortable` option is set to `true`)
 
