@@ -7,7 +7,7 @@ jquery.datagrid
 - Simple columns definition
 - Plugins for cell, pager and sorter renderers
 - Events on each step (you do what you want with your data)
-- Convert input in automatic filters
+- Convert from elements (input, select) into automatic filters
 
 # Configuration
 
@@ -177,6 +177,21 @@ Data format expected to render the datagrid is an object like this:
 	}]
 }
 ```
+
+## Render Data
+
+HTML table is displayed with `datagrid.renderData( data )` method.
+
+> `onSourceData( data )` event is called (if defined). Data is in expected format. Must return changed data.
+
+If a `sorter` plugin is defined, clic events are attached on `th` (if column `sortable` option is set to `true`)
+
+> `onRowData( rowdata, numrow, $tr )` event is called on each `tr` line (if defined). Must return changed data.<br>
+> Usefull to change attributes of a `tr`.
+
+Each cell is displayed (*see cell rendering*)
+
+> `onComplete()` event is called when all is rendered (if defined).
 
 
 # Methods
