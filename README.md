@@ -7,7 +7,7 @@ jquery.datagrid
 - Simple columns definition
 - Plugins for cell, pager and sorter renderers
 - Events on each step (you do what you want with your data)
-- Convert from elements (input, select) into automatic filters
+- Convert form elements (input, select) into automatic filters
 
 # Configuration
 
