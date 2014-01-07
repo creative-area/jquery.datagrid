@@ -210,6 +210,21 @@ Each cell is displayed (*see cell rendering*)
 
 # Filters
 
+You can magically add automatic filters. It works with all form elements.
+
+```javascript
+var datagrid = $( selector ).datagrid({
+    // options
+});
+
+// just pass a $element to the addFilter method
+datagrid.addFilter( $element );
+```
+
+All form elements (input, select, taxtarea) contents in the `$element` win a `change` event that automatically call `datagrid.getData()`.
+
+The changed element value is added to the sent params (key is html name).
+
 
 # Plugins
 
