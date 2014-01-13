@@ -234,5 +234,23 @@ The changed element value is added to the sent params (key is html name).
 
 ## Sorter Plugin
 
+Add a newplugin
+
+```javascript
+$.fn.datagrid( function() {
+	// sortable plugin
+	this.addPlugin( "sortable", "sortablePluginName", function( ascendant, sortableOptions ) {
+		// this is the $(th) of the sorted column
+		// ascendant is a boolean : true if ascendant, false if descendant
+		// sortableOptions are set when you use sorter option with { "pluginName": sortableOptions }
+		if ( ascendant ) {
+			this.append( " up" );
+		} else {
+			this.append( " down" );
+		}
+	});
+});
+```
+
 ## Pager Plugin
 
