@@ -234,7 +234,7 @@ The changed element value is added to the sent params (key is html name).
 
 ## Sorter Plugin
 
-Add a newplugin
+Add a new sorter plugin
 
 ```javascript
 $.fn.datagrid( function() {
@@ -249,6 +249,26 @@ $.fn.datagrid( function() {
 			this.append( " down" );
 		}
 	});
+});
+```
+
+So you can use it with
+
+```javascript
+$( selector ).datagrid({
+	...
+	sorter: "sortablePluginName",
+	...
+});
+```
+
+Or with params
+
+```javascript
+$( selector ).datagrid({
+	...
+	sorter: { "sortablePluginName": sortableOptions },
+	...
 });
 ```
 

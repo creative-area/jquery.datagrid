@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	<meta charset="utf-8">
+	<title>jQuery Datagrid - Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="jQuery Datagrid">
+	<meta name="author" content="Creative Area">
+	
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
+	
+	<script type="text/javascript" src="../jquery.datagrid2.js"></script>
+
+	<script type="text/javascript">
+	$( document ).ready( function() {
+
+		// Test sortable plugin
+		$.fn.datagrid( "plugin", "sortable", "test-sort", function( ascendant, sortableOptions ) {
+			// this is the $(th) of the sorted column
+			// ascendant is a boolean : true if ascendant, false if descendant
+			// sortableOptions are set when you use sorter option with { "pluginName": sortableOptions }
+			if ( ascendant ) {
+				this.append( " <small>- asc</small>" );
+			} else {
+				this.append( " <small>- desc</small>" );
+			}
+		});
+
+		// Test pager plugin
+		var pagerBootstrap3 = function( page, lastpage, pagerOptions ) {
+			var datagrid = this;
+			var options = {
+				firstPage: false,
+				prevPage: false,
+				nextPage: false,
+				lastPage: false,
+				hideDisabled: false,
+				align: false, // false (left), "centered", "right"
+				sizing: false, // false (normal), "lg" (large), "sm" (small)
+				behavior: false // "sliding", "paging"
+			};
+			if ( pagerOptions ) {
+				$.extend( options, pagerOptions );
+			}
+
+			var div = $( "<div>" ),
+				ul = $( "<ul>", { "class": "pagination" + ( ( options.sizing ) ? ' pagination-'+options.sizing : '' ) } ),
+				li;
+			
+			// default limits (all pages)
+			var pagerLimits = {
+				minpage: 1, 
+				maxpage: lastpage, 
+				prevpage: ( page == 1 ) ? 1 : page - 1, 
+				nextpage: ( page == lastpage ) ? lastpage : page + 1
+			};
+			
+			// behavior helper
+			if ( options.behavior ) {
+				pagerLimits = datagrid.getPagerLimits( options.behavior, lastpage );
+			}
+			
+			var pagerExtremes = function ( disabled, gopage, label ) {
+				if ( disabled ) {
+					li = ( options.hideDisabled ) ? false : $("<li>").addClass( "disabled" );
+				} else {
+					li = $("<li>", {
+						data: { "page": gopage },
+						click: function() {
+							datagrid.page( $(this).data( "page" ) );
+							datagrid.getData();
+						}
+					});
+				}
+				if ( li ) {
+					li.append(
+						$("<a>").html( label )
+					)
+					ul.append( li );
+				}
+			}
+			if ( options.firstPage ) {
+				pagerExtremes( ( page == 1 ), 1, options.firstPage );
+			}
+			if ( options.prevPage ) {
+				pagerExtremes( ( page == 1 ), page - 1, options.prevPage );
+			}
+			for ( var i = pagerLimits.minpage ; i <= pagerLimits.maxpage ; i++ ) {
+				ul.append(
+					$("<li>", {
+						data: { "page": i },
+						click: function() {
+							datagrid.page( $(this).data( "page" ) );
+							datagrid.getData();
+						}
+					})
+					.addClass(function() {
+						return ( page == i ) ? "active" : false;
+					})
+					.append(
+						$("<a>").html(i)
+					)
+				);
+			}
+			if ( options.nextPage ) {
+				pagerExtremes( ( page == lastpage ), page + 1, options.nextPage );
+			}
+			if ( options.lastPage ) {
+				pagerExtremes( ( page == lastpage ), lastpage, options.lastPage );
+			}
+			div.append( ul );
+			return div;
+		}
+		$.fn.datagrid( "plugin", "pager", "test-pager", pagerBootstrap3 );
+
+		$.fn.datagrid( "plugin", "pager", "test-pager-extend", "test-pager", {
+			behavior: { "sliding": { "pages": 3 } },
+			firstPage: "&lt;&lt;",
+			prevPage: "&lt;",
+			nextPage: "&gt;",
+			lastPage: "&gt;&gt;"
+		});
+
+		// simple
+		var dg1 = $( "#dg-test" ).datagrid({
+			url: "data/demo-simple.php",
+			col: [{
+				field: "Continent",
+				title: "Continent",
+				sortable: true
+			},{
+				field: "Name",
+				title: "Name",
+				sortable: true
+			},{
+				field: "Population",
+				title: "Population",
+				sortable: true
+			},{
+				field: "SurfaceArea",
+				title: "Surface",
+				sortable: true
+			}],
+			attr: { "class": "table table-bordered table-condensed" },
+			sorter: "test-sort", // "bootstrap",
+			// pager: "test-pager", // "bootstrap",
+			// pager: "test-pager-extend",
+			// pager: { "test-pager": {
+			// 	behavior: { "sliding": { "pages": 3 } },
+			// 	firstPage: "&lt;&lt;",
+			// 	prevPage: "&lt;",
+			// 	nextPage: "&gt;",
+			// 	lastPage: "&gt;&gt;"
+			// }},
+			pagerPosition: ["top","bottom"],
+			paramsDefault: {paging:20}
+		});
+	});
+	</script>
+	
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.min.css" rel="stylesheet">
+	<link href="http://labs.creative-area.net/css/prettify-ca.css" rel="stylesheet">
+	
+	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	
+	<style>
+	a { cursor: pointer;}
+	.dg div span { cursor: pointer;}
+	</style>
+	</head>
+	
+	<body>
+		<div class="container">
+			<h1>jQuery datagrid <small>tests</small></h1>
+			<div class="row">
+				<div class="col-sm-12">
+					<h3>Tests</h3>
+					<div id="dg-test" class="dg"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
