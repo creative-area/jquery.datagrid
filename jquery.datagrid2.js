@@ -23,7 +23,9 @@
 
     // Default plugin options
     var defaults = {
+            source: "default", // plugin
             url: "",
+            autoload: true,
             paramsDefault: {},
             paramsMapping: {
                 page: "page",
@@ -31,9 +33,9 @@
                 orderby: "orderby",
                 direction: "direction"
             },
+            attr: {},
+            attrSortable: {},
             col: [],
-            autoload: true,
-            source: "post",
             parse: function( data ) {
                 if ( $.type( data ) === 'string' ) {
                     return JSON.parse( data );
@@ -41,53 +43,175 @@
                     return data;
                 }
             },
+            onBefore: false,
             onData: false,
             onRowData: false,
             noData: "no data",
-            attr: false,
-            sorter: false, // plugin : "bootstrap"
+            onComplete: false,
+            sorter: "default", // plugin : "bootstrap"
             pager: "default", // plugin : "bootstrap"
             pagerPosition: "bottom",
-            resetContainer: true,
-            onBefore: false,
-            onComplete: false
+            resetContainer: true
         };
 
     // Default column options
     var defaultsColumn = {
             field: "",
             title: "",
-            render: false,
+            render: "default", // plugin
             sortable: false,
             sortableDefaultAsc: true,
             attr: {},
             attrHeader: {}
         };
 
+    // tools
+    var tools = {
+        // pager helper
+        getPagerLimits: function( behavior, page, lastpage ) {
+            if ( $.type( behavior ) === 'string' ) {
+                var oldbehavior = behavior;
+                behavior = {};
+                behavior[ oldbehavior ] = {};
+            }
+            
+            if ( behavior[ "sliding" ] ) {
+                var pages = ( behavior[ "sliding" ][ "pages" ] ) ? behavior[ "sliding" ][ "pages" ] : 3;
+                return {
+                    minpage: Math.max( 1, Math.min( page - pages, lastpage - ( 2 * pages ) ) ), 
+                    maxpage: Math.min( lastpage, Math.max( page + pages, ( 2 * pages ) + 1 ) )
+                };
+            }
+        }
+    };
+
     // Plugins
     var renderers = {
-            source: {},
-            sortable: {},
-            pager: {
-                "default": function( page, lastpage ) {
+            sourceArgs: 0,
+            source: {
+                "default": function( sourceOptions ) {
                     var self = this;
-                    var pager = $( "<div>" );
-                    for ( var i = 1 ; i <= lastpage ; i++ ) {
-                        pager.append(
-                            $("<span>", {
-                                data: { "page": i },
-                                html: " &nbsp;"+i+"&nbsp; ",
-                                click: function() {
-                                    self.page( $(this).data( "page" ) );
-                                    self.getData();
-                                }
-                            })
-                        );
-                    }
-                    return pager;
+                    $.post( self.settings.url, self.params, function( result ) {
+                        self.render( result );
+                    } );
                 }
             },
-            cell: {}
+            sorterArgs: 1,
+            sorter: {
+                "default": function( ascendant, sorterOptions ) {
+                    var options = {
+                        up: " ↑",
+                        down: " ↓"
+                    }
+                    if ( sorterOptions ) {
+                        $.extend( options, sorterOptions );
+                    }
+                    if ( ascendant ) {
+                        this.append( options.up );
+                    } else {
+                        this.append( options.down );
+                    }
+                }
+            },
+            cellArgs: 1,
+            cell: {
+                "default": function( data, cellOptions ) {
+                    return data.value;
+                }
+            },
+            pagerArgs: 2,
+            pager: {
+                "default": function( page, lastpage, pagerOptions ) {
+                    var datagrid = this;
+                    var options = {
+                        container: "div",
+                        attrContainer: {},
+                        attrUl: {},
+                        item: "span", // "span", "div", "li" (auto insert ul)
+                        attrItemActive: {},
+                        attrItemDisabled: {},
+                        before: " ",
+                        after: " ",
+                        link: false,
+                        firstPage: false,
+                        prevPage: false,
+                        nextPage: false,
+                        lastPage: false,
+                        hideDisabled: false,
+                        behavior: false // "sliding", "paging"
+                    };
+                    if ( pagerOptions ) {
+                        $.extend( options, pagerOptions );
+                    }
+
+                    var container = $( "<" + options.container + ">" ).attr( options.attrContainer );
+                    if ( options.item === "li" ) {
+                        var ul = $( "<ul>" ).attr( options.attrUl );
+                        container.append( ul );
+                        container = ul;
+                    }
+                    
+                    // default limits (all pages)
+                    var pagerLimits = {
+                        minpage: 1, 
+                        maxpage: lastpage
+                    };
+                    
+                    // behavior helper
+                    if ( options.behavior ) {
+                        pagerLimits = datagrid.tools.getPagerLimits( options.behavior, datagrid.page(), lastpage );
+                    }
+                    
+                    var pagerExtremes = function ( disabled, gopage, label ) {
+                        var element;
+                        if ( disabled ) {
+                            element = ( options.hideDisabled ) ? false : $("<" + options.item + ">").attr( options.attrItemDisabled );
+                        } else {
+                            element = $("<" + options.item + ">", {
+                                data: { "page": gopage },
+                                click: function() {
+                                    datagrid.page( $(this).data( "page" ) );
+                                    datagrid.getData();
+                                }
+                            });
+                        }
+                        if ( element ) {
+                            element.append(
+                                $("<a>").html( label )
+                            )
+                            container.append( element );
+                        }
+                    }
+                    if ( options.firstPage ) {
+                        pagerExtremes( ( page == 1 ), 1, options.firstPage );
+                    }
+                    if ( options.prevPage ) {
+                        pagerExtremes( ( page == 1 ), page - 1, options.prevPage );
+                    }
+                    for ( var i = pagerLimits.minpage ; i <= pagerLimits.maxpage ; i++ ) {
+                        container.append(
+                            $("<" + options.item + ">", {
+                                data: { "page": i },
+                                click: function() {
+                                    datagrid.page( $(this).data( "page" ) );
+                                    datagrid.getData();
+                                },
+                                attr: ( page == i ) ? options.attrItemActive : {}
+                            })
+                            .append(
+                                ( options.link ) ? $("<a>").html( options.before + i + options.after ) : options.before + i + options.after
+                            )
+                        );
+                    }
+                    if ( options.nextPage ) {
+                        pagerExtremes( ( page == lastpage ), page + 1, options.nextPage );
+                    }
+                    if ( options.lastPage ) {
+                        pagerExtremes( ( page == lastpage ), lastpage, options.lastPage );
+                    }
+                    return container;
+                }
+            }
         };
 
     // The actual plugin constructor
@@ -114,6 +238,8 @@
         this.params[ this.settings.paramsMapping.orderby ] = "";
         this.params[ this.settings.paramsMapping.direction ] = "";
         this.params = $.extend( this.params, this.settings.paramsDefault );
+
+        this.tools = tools;
 
         this._defaults = defaults;
         this._name = pluginName;
@@ -161,7 +287,7 @@
         source: {
             "function": function( self ) {
                 $.when(
-                    self.settings.source.call( self, self.params )
+                    self.settings.source.call( self )
                 ).done(
                     function( result ) {
                         self.render( result );
@@ -169,19 +295,12 @@
                 );
             },
             "string": function( self ) {
-                switch ( self.settings.source ) {
-                    case "post":
-                        // post ajax source
-                        $.post( self.settings.url, self.params, function( result ) {
-                            self.render( result );
-                        } );
-                    break;
-
-                    default:
-                        if ( renderers.source[ self.settings.source ] ) {
-                            renderers.source[ self.settings.source ].call( self, self.params );
-                        }
-                    break;
+                if ( renderers.source[ self.settings.source ] ) {
+                    renderers.source[ self.settings.source ].call( self );
+                } else {
+                    // no plugin found
+                    self._onError( "Unknown source", self.settings.source );
+                    return false;
                 }
             }
         },
@@ -214,8 +333,7 @@
             
             if ( result.data && result.data.length > 0 ) {
                 
-                table = $( "<table>" );
-                if ( this.settings.attr !== false ) table.attr( this.settings.attr );
+                table = $( "<table>" ).attr( this.settings.attr );
                 
                 var thead = $( "<thead>" ),
                     tbody = $( "<tbody>" ),
@@ -238,7 +356,7 @@
                                     "colIndex": i 
                                 })
                                 .css( "cursor", "pointer" )
-                                .addClass( "text-info" )
+                                .attr( self.settings.attrSortable )
                                 .on( "click", function() {
                                     
                                     self.page( 1 );
@@ -317,9 +435,9 @@
                 this.settings.sorter.call( th, ascendant );
             },
             "string": function( self, th, ascendant ) {
-                if ( renderers.sortable[ self.settings.sorter ] ) {
+                if ( renderers.sorter[ self.settings.sorter ] ) {
                     // plugin
-                    renderers.sortable[ self.settings.sorter ].call( th, ascendant );
+                    renderers.sorter[ self.settings.sorter ].call( th, ascendant );
                     return true;
                 } else {
                     // no plugin found
@@ -331,9 +449,9 @@
                 // plugin
                 var isLoaded = false;
                 for ( var p in self.settings.sorter ) {
-                    if ( renderers.sortable[ p ] ) {
+                    if ( renderers.sorter[ p ] ) {
                         isLoaded = true;
-                        renderers.sortable[ p ].call( th, ascendant, self.settings.sorter[ p ] );
+                        renderers.sorter[ p ].call( th, ascendant, self.settings.sorter[ p ] );
                         return true;
                     }
                 }
@@ -346,66 +464,42 @@
         },
 
         getCell: function( result, i, row, td ) {
-            if ( this.settings.col[ i ].render === false ) {
-                return result.data[ row ][ this.settings.col[ i ].field ];
-            } else {
-                return ( this.cell[ $.type( this.settings.col[ i ].render ) ] || function() { return "" } )( i, td, {
-                    value: result.data[ row ][ this.settings.col[ i ].field ], 
-                    field: this.settings.col[ i ].field,
-                    row: result.data[ row ], 
-                    colindex: i
-                });
-            }
+            return ( this.cell[ $.type( this.settings.col[ i ].render ) ] || function() { return "" } )( this, i, td, {
+                value: result.data[ row ][ this.settings.col[ i ].field ], 
+                field: this.settings.col[ i ].field,
+                row: result.data[ row ], 
+                colindex: i
+            });
         },
         cell: {
-            "function": function( i, td, renderParams ) {
+            "function": function( self, i, td, renderParams ) {
                 // "this" is the $(td) in the callback
-                return this.settings.col[ i ].render.call( td, renderParams );
+                return self.settings.col[ i ].render.call( td, renderParams );
             },
-            "string": function( i, td, renderParams ) {
-                if ( renderers.cell[ this.settings.col[ i ].render ] ) {
+            "string": function( self, i, td, renderParams ) {
+                if ( renderers.cell[ self.settings.col[ i ].render ] ) {
                     // plugin
-                    return renderers.cell[ this.settings.col[ i ].render ].call( td, renderParams );
+                    return renderers.cell[ self.settings.col[ i ].render ].call( td, renderParams );
                 } else {
                     // no plugin found
-                    this._onError( "Unknown cell render", this.settings.col[ i ].render );
+                    self._onError( "Unknown cell render", self.settings.col[ i ].render );
                     return "";
                 }
             },
-            "object": function( i, td, renderParams ) {
+            "object": function( self, i, td, renderParams ) {
                 // plugin
                 var isLoaded = false;
-                for ( var p in this.settings.col[ i ].render ) {
+                for ( var p in self.settings.col[ i ].render ) {
                     if ( renderers.cell[ p ] ) {
                         isLoaded = true;
-                        return renderers.cell[ p ].call( td, renderParams, this.settings.col[ i ].render[ p ] );
+                        return renderers.cell[ p ].call( td, renderParams, self.settings.col[ i ].render[ p ] );
                     }
                 }
                 if ( !isLoaded ) {
                     // no plugin found
-                    this._onError( "Unknown cell render", JSON.stringify( this.settings.col[ i ].render ) );
+                    self._onError( "Unknown cell render", JSON.stringify( self.settings.col[ i ].render ) );
                     return "";
                 }
-            }
-        },
-            
-        // pager helper
-        getPagerLimits: function( behavior, lastpage ) {
-            if ( $.type( behavior ) === 'string' ) {
-                var oldbehavior = behavior;
-                behavior = {};
-                behavior[ oldbehavior ] = {};
-            }
-            
-            if ( behavior[ "sliding" ] ) {
-                var page = this.page(),
-                    pages = ( behavior[ "sliding" ][ "pages" ] ) ? behavior[ "sliding" ][ "pages" ] : 3;
-                return {
-                    minpage: Math.max( 1, Math.min( page - pages, lastpage - ( 2 * pages ) ) ), 
-                    maxpage: Math.min( lastpage, Math.max( page + pages, ( 2 * pages ) + 1 ) ), 
-                    prevpage: ( page == 1 ) ? 1 : page - 1, 
-                    nextpage: ( page == lastpage ) ? lastpage : page + 1
-                };
             }
         },
 
@@ -444,19 +538,19 @@
         },
 
         getNoData: function() {
-            return ( this.noData[ $.type( this.settings.noData ) ] || function() { this.element.html("") } )();
+            return ( this.noData[ $.type( this.settings.noData ) ] || function() { this.element.html("") } )( this );
         },
         noData: {
-            "string": function() {
-                this.element.html( this.settings.noData );
+            "string": function( self ) {
+                self.$el.html( self.settings.noData );
             },
-            "function": function() {
-                this.element.html( this.settings.noData() );
+            "function": function( self ) {
+                self.$el.html( self.settings.noData() );
             }
         },
 
         // auto filters
-        addFilter: function( selector ) {
+        filters: function( selector ) {
             var self = this;
             selector.each( function() {
                 $selector = $(this);
@@ -481,6 +575,8 @@
         
         // add filter on input, select, textarea
         addElementFilter: function( $element, eventName, selector ) {
+            var self = this;
+
             // no auto add if data datagrid-filter = "disable"
             if ( $element.data("datagrid-filter") == "disable" ) return false;
             
@@ -502,14 +598,14 @@
                         self.params[ $element[0].name ] = $element.val();
                     break;
                 }
-                self.setPage( 1 );
+                self.page( 1 );
                 self.getData();
             });
         },
 
         // error
         _onError: function( err, value ) {
-            console.error( "[jQuery.datagrid Error] " + err + ": " + value + "" );
+            console.error( "[jquery.datagrid error] " + err + ": " + value + "" );
         }
     }
 
@@ -552,23 +648,28 @@
             // Plugins
             if (options === "plugin") {
                 // Add Plugins
-                // $.fn.datagrid( "plugin", "source|sortable|pager|cell", "pluginName", function );
+                // $.fn.datagrid( "plugin", "source|sorter|pager|cell", "pluginName", function );
                 if ( args.length === 4 && typeof args[1] === "string" && typeof args[2] === "string" && typeof args[3] === "function" ) {
                     // renderers[ type ][ name ] = callback;
                     renderers[ args[1] ][ args[2] ] = args[3];
                     return this;
                 }
                 // Extend Plugins
-                // $.fn.datagrid( "plugin", "source|sortable|pager|cell", "pluginName", "extendedPluginName", extendedOptions );
+                // $.fn.datagrid( "plugin", "source|sorter|pager|cell", "pluginName", "extendedPluginName", extendedOptions );
                 if ( args.length === 5 && typeof args[1] === "string" && typeof args[2] === "string" && typeof args[3] === "string" ) {
                     // renderers[ type ][ name ] = callback;
-                    renderers[ args[1] ][ args[2] ] = function() {
+                    var pluginType = args[1];
+                    renderers[ pluginType ][ args[2] ] = function() {
                         var _args = [];
                         for ( var i=0 ; i < arguments.length ; i++ ) {
                             _args.push(arguments[i]);
                         }
-                        _args.push( args[4] );
-                        return renderers[ args[1] ][ args[3] ].apply( this, _args );
+                        if ( _args.length > renderers[ pluginType + "Args" ] ) {
+                            _args[ _args.length - 1 ] = $.extend( args[4], _args[ _args.length - 1 ] );
+                        } else {
+                            _args.push( args[4] );
+                        }
+                        return renderers[ pluginType ][ args[3] ].apply( this, _args );
                     }
                     return this;
                 }
@@ -576,7 +677,7 @@
 
             // Get datagrid instance
             if (options === "datagrid") {
-                return $.data(this, "plugin_" + pluginName);
+                return this.data("plugin_" + pluginName);
             }
 
             this.each(function () {

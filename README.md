@@ -53,7 +53,8 @@ $( document ).ready( function() {
 	},
 	autoload: true,
 	col: [],
-	attr: false,
+	attr: {},
+    attrSortable: {}, 	// Param for `$(th).attr()` if sortable
 	noData: "no data",
 	sorter: false,
 	pager: "default",
@@ -217,8 +218,8 @@ var datagrid = $( selector ).datagrid({
     // options
 });
 
-// just pass a $element to the addFilter method
-datagrid.addFilter( $element );
+// just pass a $element to the filters method
+datagrid.datagrid( "filters", $element );
 ```
 
 All form elements (input, select, taxtarea) contents in the `$element` win a `change` event that automatically call `datagrid.getData()`.

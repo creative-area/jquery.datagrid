@@ -11,124 +11,24 @@
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
 	
 	<script type="text/javascript" src="../jquery.datagrid2.js"></script>
+	<script type="text/javascript" src="../plugins/jquery.datagrid2.bootstrap3.js"></script>
 
 	<script type="text/javascript">
 	$( document ).ready( function() {
 
-		// Test sortable plugin
-		$.fn.datagrid( "plugin", "sortable", "test-sort", function( ascendant, sortableOptions ) {
-			// this is the $(th) of the sorted column
-			// ascendant is a boolean : true if ascendant, false if descendant
-			// sortableOptions are set when you use sorter option with { "pluginName": sortableOptions }
-			if ( ascendant ) {
-				this.append( " <small>- asc</small>" );
-			} else {
-				this.append( " <small>- desc</small>" );
-			}
-		});
-
-		// Test pager plugin
-		var pagerBootstrap3 = function( page, lastpage, pagerOptions ) {
-			var datagrid = this;
-			var options = {
-				firstPage: false,
-				prevPage: false,
-				nextPage: false,
-				lastPage: false,
-				hideDisabled: false,
-				align: false, // false (left), "centered", "right"
-				sizing: false, // false (normal), "lg" (large), "sm" (small)
-				behavior: false // "sliding", "paging"
-			};
-			if ( pagerOptions ) {
-				$.extend( options, pagerOptions );
-			}
-
-			var div = $( "<div>" ),
-				ul = $( "<ul>", { "class": "pagination" + ( ( options.sizing ) ? ' pagination-'+options.sizing : '' ) } ),
-				li;
-			
-			// default limits (all pages)
-			var pagerLimits = {
-				minpage: 1, 
-				maxpage: lastpage, 
-				prevpage: ( page == 1 ) ? 1 : page - 1, 
-				nextpage: ( page == lastpage ) ? lastpage : page + 1
-			};
-			
-			// behavior helper
-			if ( options.behavior ) {
-				pagerLimits = datagrid.getPagerLimits( options.behavior, lastpage );
-			}
-			
-			var pagerExtremes = function ( disabled, gopage, label ) {
-				if ( disabled ) {
-					li = ( options.hideDisabled ) ? false : $("<li>").addClass( "disabled" );
-				} else {
-					li = $("<li>", {
-						data: { "page": gopage },
-						click: function() {
-							datagrid.page( $(this).data( "page" ) );
-							datagrid.getData();
-						}
-					});
-				}
-				if ( li ) {
-					li.append(
-						$("<a>").html( label )
-					)
-					ul.append( li );
-				}
-			}
-			if ( options.firstPage ) {
-				pagerExtremes( ( page == 1 ), 1, options.firstPage );
-			}
-			if ( options.prevPage ) {
-				pagerExtremes( ( page == 1 ), page - 1, options.prevPage );
-			}
-			for ( var i = pagerLimits.minpage ; i <= pagerLimits.maxpage ; i++ ) {
-				ul.append(
-					$("<li>", {
-						data: { "page": i },
-						click: function() {
-							datagrid.page( $(this).data( "page" ) );
-							datagrid.getData();
-						}
-					})
-					.addClass(function() {
-						return ( page == i ) ? "active" : false;
-					})
-					.append(
-						$("<a>").html(i)
-					)
-				);
-			}
-			if ( options.nextPage ) {
-				pagerExtremes( ( page == lastpage ), page + 1, options.nextPage );
-			}
-			if ( options.lastPage ) {
-				pagerExtremes( ( page == lastpage ), lastpage, options.lastPage );
-			}
-			div.append( ul );
-			return div;
-		}
-		$.fn.datagrid( "plugin", "pager", "test-pager", pagerBootstrap3 );
-
-		$.fn.datagrid( "plugin", "pager", "test-pager-extend", "test-pager", {
-			behavior: { "sliding": { "pages": 3 } },
-			firstPage: "&lt;&lt;",
-			prevPage: "&lt;",
-			nextPage: "&gt;",
-			lastPage: "&gt;&gt;"
-		});
-
-		// simple
-		var dg1 = $( "#dg-test" ).datagrid({
+		// tests
+		$( "#dg-test" ).datagrid({
 			url: "data/demo-simple.php",
 			col: [{
 				field: "Continent",
 				title: "Continent",
-				sortable: true
+				sortable: true,
+				// render: "fa-button"
+				render: { "fa-button" : {
+					style: "default",
+					size: "xs",
+					icon: "plane"
+				} }
 			},{
 				field: "Name",
 				title: "Name",
@@ -143,19 +43,18 @@
 				sortable: true
 			}],
 			attr: { "class": "table table-bordered table-condensed" },
-			sorter: "test-sort", // "bootstrap",
-			// pager: "test-pager", // "bootstrap",
-			// pager: "test-pager-extend",
-			// pager: { "test-pager": {
-			// 	behavior: { "sliding": { "pages": 3 } },
-			// 	firstPage: "&lt;&lt;",
-			// 	prevPage: "&lt;",
-			// 	nextPage: "&gt;",
-			// 	lastPage: "&gt;&gt;"
-			// }},
+			attrSortable: { "class": "text-info" },
+			// sorter: "bootstrap",
+			// pager: "default",
+			// pager: "bootstrap",
+			pager: { "bootstrap-sm": {
+				behavior: { "sliding": { "pages": 4 } },
+			}},
 			pagerPosition: ["top","bottom"],
-			paramsDefault: {paging:20}
-		});
+			paramsDefault: {paging:10}
+		})
+		.datagrid( "filters", $("#dg-filters") );
+
 	});
 	</script>
 	
@@ -180,6 +79,41 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<h3>Tests</h3>
+					<div id="dg-filters">
+						<form class="form-inline" role="form">
+							<div class="form-group" style="width:115px;">
+								<label class="sr-only" for="ContinentDemoFilters">Continent</label>
+								<select name="Continent" id="ContinentDemoFilters" class="form-control">
+									<option value="">Continents - all</option>
+									<option value="Africa">Africa</option>
+									<option value="Antarctica">Antarctica</option>
+									<option value="Asia">Asia</option>
+									<option value="Europe">Europe</option>
+									<option value="North America">North America</option>
+									<option value="Oceania">Oceania</option>
+									<option value="South America">South America</option>
+								</select>
+							</div>
+							<div class="form-group" style="width:120px;">
+								<label class="sr-only" for="PopulationDemoFilters">Continent</label>
+								<select name="PopulationInterval" id="PopulationDemoFilters" class="form-control">
+									<option value="">Populations - all</option>
+									<option value="1">Inf 1 million</option>
+									<option value="2">Between 1 and 100 millions</option>
+									<option value="3">Sup 100 millions</option>
+								</select>
+							</div>
+							<div class="form-group" style="width:210px;">
+								<label class="sr-only" for="SurfaceAreaDemoFilters">Surface</label>
+								<select name="SurfaceArea" id="SurfaceAreaDemoFilters" class="form-control" multiple="multiple" size="4">
+									<option value="" disabled>Surfaces</option>
+									<option value="1">&gt; 1 000 000</option>
+									<option value="2">&gt; 100 000 &amp; &lt; 1 000 000</option>
+									<option value="3">&lt; 100 000</option>
+								</select>
+							</div>
+						</form>
+					</div>
 					<div id="dg-test" class="dg"></div>
 				</div>
 			</div>
