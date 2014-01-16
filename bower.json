@@ -1,0 +1,19 @@
+{
+        "name": "jquery.datagrid",
+        "version": "0.1",
+        "homepage": "https://github.com/creative-area/jquery.datagrid",
+        "authors": [
+                "Creative Area <contact@creative-area.net>"
+        ],
+        "description": "UI less datagrid: jquery plugin",
+        "main": "jquery.datagrid.js",
+        "keywords": [
+                "jquery",
+                "plugin",
+                "datagrid",
+                "jquery-plugin",
+                "jquery-datagrid",
+                "jquery.datagrid"
+        ],
+        "license": "MIT"
+}
