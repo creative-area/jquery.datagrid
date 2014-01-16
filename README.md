@@ -143,7 +143,7 @@ data = {
 
 # Flow of data and events
 
-## Get Data
+### Get Data
 
 To get the data and launch the flow, you need to call `datagrid.fetch( filters )`<br>
 It will be automatically executed when `option.autoload = true`.
@@ -165,7 +165,7 @@ Data is parsed with `source` method. By default, if returned data is a JSON stri
 
 After data is fetched from the source, `datagrid.render( data )` is called.
 
-#### Data Format
+### Data Format
 
 Data format expected to render the datagrid is an object like this:
 ```javascript
@@ -185,7 +185,7 @@ Data format expected to render the datagrid is an object like this:
 }
 ```
 
-## Render Data
+### Render Data
 
 HTML table is displayed when `datagrid.render( data )` method is called.
 
@@ -379,20 +379,53 @@ Pager plugin is used to display pager section (returns HTML).
 
 ```javascript
 {
+	// pager element wrapper
     container: "div",
+    // pager element wrapper attributes set by `container.attr( attrContainer )`
     attrContainer: {},
+    // if `item` is "li", append an `ul` element to the `container` and set `ul` attributes with `ul.attr( attrUl )`
     attrUl: {},
-    item: "span", // "span", "div", "li" (auto insert ul)
+    // html element used for pages: "span", "div", "li" (auto insert ul)
+    item: "span",
+    // attributes set to active page item (current page)
     attrItemActive: {},
+    // attributes set to disabled page items
     attrItemDisabled: {},
+    // html display before page number
     before: " ",
+    // html display after page number
     after: " ",
+    // if `link = true`, wrap page number with an `a` HTML tag
     link: false,
+    // if `firstPage !== false`, add a page item "first"
+    // Display value as text (for example `firstPage: "first page"`)
     firstPage: false,
+    // if `prevPage !== false`, add a page item "previous"
+    // Display value as text (for example `prevPage: "previous page"`)
     prevPage: false,
+    // if `nextPage !== false`, add a page item "next"
+    // Display value as text (for example `nextPage: "next page"`)
     nextPage: false,
+    // if `lastPage !== false`, add a page item "last"
+    // Display value as text (for example `lastPage: "last page"`)
     lastPage: false,
+    // if `hideDisabled = true`, hide disabled pages
+    // (for example, hide `firstPage` and `prevPage` when current page is 1)
     hideDisabled: false,
-    behavior: false // "sliding", "paging"
+    // behavior = false (show all pages)
+    // behavior = "sliding" (current page always on middle of the pager)
+    // behavior = "paging" (TODO)
+    behavior: false
 }
+```
+
+You can write you own pager from scratch
+
+```javascript
+$.fn.datagrid( "plugin", "pager", "scratch-pager", function( page, lastpage, pagerOptions ) {
+    // your pager logic, based on "page" (current page) and "lastpage"
+	var html = ...;
+	// you must return html pager
+    return html;
+});
 ```

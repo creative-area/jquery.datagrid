@@ -48,8 +48,8 @@
             onData: false,
             onRowData: false,
             onComplete: false,
-            sorter: "default", // plugin : "bootstrap"
-            pager: "default", // plugin : "bootstrap"
+            sorter: "default", // plugin
+            pager: "default", // plugin
             pagerPosition: "bottom",
             resetContainer: true
         };
