@@ -10,8 +10,8 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
 	
-	<script type="text/javascript" src="../jquery.datagrid2.js"></script>
-	<script type="text/javascript" src="../plugins/jquery.datagrid2.bootstrap3.js"></script>
+	<script type="text/javascript" src="../jquery.datagrid.js"></script>
+	<script type="text/javascript" src="../plugins/jquery.datagrid.bootstrap3.js"></script>
 	<script type="text/javascript" src="http://labs.creative-area.net/js/prettify.js"></script>
 
 	<script type="text/javascript">
@@ -136,7 +136,8 @@
 			paramsDefault: {paging:20}
 		});
 		dg3.datagrid( "filters", $("#dg-demo-filters-area") );
-
+		// dg3.datagrid( "datagrid" ).filters( $("#dg-demo-filters-area") );
+		
 		// highlight code
 		prettyPrint();
 	});
@@ -365,7 +366,10 @@
 
 // just pass a $element to the filters method
 // works with all form elements
-dg3.datagrid( "filters", $("#dg-demo-filters-area") );</pre>
+dg3.datagrid( "filters", $("#dg-demo-filters-area") );
+
+// you can also use .datagrid( "datagrid" ) method
+// dg3.datagrid( "datagrid" ).filters( $("#dg-demo-filters-area") );</pre>
 					
 				</div>
 			</div>
