@@ -11,12 +11,12 @@ jquery.datagrid
 
 # Configuration
 
-Just load `jquery.datagrid-draft.js` (and optional plugin scripts if you want to use them)
+Just load `jquery.datagrid.js` (and optional plugin scripts if you want to use them)
 
 A simple example
 
 ```html
-<script type="text/javascript" src="jquery.datagrid-draft.js"></script>
+<script type="text/javascript" src="jquery.datagrid.js"></script>
 <script type="text/javascript">
 $( document ).ready( function() {
 	var datagrid = $(container).datagrid({
