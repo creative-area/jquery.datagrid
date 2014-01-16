@@ -82,7 +82,6 @@
 
 		// cell plugins
 		var cellButton = function( data, buttonOptions ) {
-			var datagrid = this;
 			var options = {
 				style: false, // "primary", "info", "success", "warning", "danger", "inverse"
 				size: false, // "lg", "sm", "xs"

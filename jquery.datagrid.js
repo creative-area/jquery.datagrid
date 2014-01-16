@@ -33,9 +33,6 @@
                 orderby: "orderby",
                 direction: "direction"
             },
-            attr: {},
-            attrSortable: {},
-            col: [],
             parse: function( data ) {
                 if ( $.type( data ) === 'string' ) {
                     return JSON.parse( data );
@@ -43,10 +40,13 @@
                     return data;
                 }
             },
+            col: [],
+            attr: {},
+            attrSortable: {},
+            noData: "no data",
             onBefore: false,
             onData: false,
             onRowData: false,
-            noData: "no data",
             onComplete: false,
             sorter: "default", // plugin : "bootstrap"
             pager: "default", // plugin : "bootstrap"
@@ -75,7 +75,7 @@
                 behavior[ oldbehavior ] = {};
             }
             
-            if ( behavior[ "sliding" ] ) {
+            if ( behavior[ "sliding" ] ) {
                 var pages = ( behavior[ "sliding" ][ "pages" ] ) ? behavior[ "sliding" ][ "pages" ] : 3;
                 return {
                     minpage: Math.max( 1, Math.min( page - pages, lastpage - ( 2 * pages ) ) ), 
@@ -171,7 +171,7 @@
                                 data: { "page": gopage },
                                 click: function() {
                                     datagrid.page( $(this).data( "page" ) );
-                                    datagrid.getData();
+                                    datagrid.fetch();
                                 }
                             });
                         }
@@ -194,7 +194,7 @@
                                 data: { "page": i },
                                 click: function() {
                                     datagrid.page( $(this).data( "page" ) );
-                                    datagrid.getData();
+                                    datagrid.fetch();
                                 },
                                 attr: ( page == i ) ? options.attrItemActive : {}
                             })
@@ -250,7 +250,7 @@
     Plugin.prototype = {
         init: function () {
             // if autoload, get data
-            if ( this.settings["autoload"] ) this.getData();
+            if ( this.settings["autoload"] ) this.fetch();
         },
 
         // get / set page
@@ -262,7 +262,7 @@
             }
         },
 
-        getData: function( filters ) {
+        fetch: function( filters ) {
             // onBefore
             if ( this.settings.onBefore !== false ) {
                 this.settings.onBefore.call( this );
@@ -365,7 +365,7 @@
                                     
                                     self.settings.col[ $(this).data( "colIndex" ) ].sortableDefaultAsc = !self.settings.col[ $(this).data( "colIndex" ) ].sortableDefaultAsc;
                                     
-                                    self.getData();
+                                    self.fetch();
                                     
                                 });
                             
@@ -599,7 +599,7 @@
                     break;
                 }
                 self.page( 1 );
-                self.getData();
+                self.fetch();
             });
         },
 

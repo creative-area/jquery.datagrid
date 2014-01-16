@@ -82,7 +82,6 @@
 
 		// cell plugins
 		var cellButton = function( data, buttonOptions ) {
-			var datagrid = this;
 			var options = {
 				icons: "glyphicon", // "glyphicon", "fa" (font-awesome)
 				style: false, // "primary", "info", "success", "warning", "danger", "inverse"
@@ -102,9 +101,7 @@
 		}
 		
 		$.fn.datagrid( "plugin", "cell", "bootstrap-button", cellButton );
-		$.fn.datagrid( "plugin", "cell", "fa-button", function( data, buttonOptions ) {
-			return cellButton.call( this, data, $.extend( buttonOptions || {}, { "icons": "fa" } ) );
-		});
+		$.fn.datagrid( "plugin", "cell", "fa-button", "bootstrap-button", { "icons": "fa" } );
 
 	}
 })(jQuery);
