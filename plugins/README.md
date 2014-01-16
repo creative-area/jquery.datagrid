@@ -7,7 +7,9 @@ jquery.datagrid - plugins
 
 Use it with Bootstrap 3.
 
-- __sorter__ `"bootstrap"`
+### sorter
+
+`bootstrap`
 
 ```javascript
 options = {
@@ -17,19 +19,21 @@ options = {
 }
 ```
 
-- __sorter__ `"bootstrap-chevron"`
+`bootstrap-chevron`
 
 Extend `"bootstrap"` with `options = {}`
 
-- __sorter__ `"bootstrap-arrow"`
+`bootstrap-arrow`
 
 Extend `"bootstrap"` with `options = { "icons": "arrow" }`
 
-- __sorter__ `"bootstrap-load"`
+`bootstrap-load`
 
 Extend `"bootstrap"` with `options = { "icons": "load" }`
 
-- __pager__ `"bootstrap"`
+### pager
+
+`bootstrap`
 
 Extend `"default"` with `options`:
 
@@ -48,15 +52,17 @@ options = {
 }
 ```
 
-- __pager__ `"bootstrap-sm"`
+`bootstrap-sm`
 
 Extend `"bootstrap"` with `options = { attrUl: { "class": "pagination pagination-sm" } }`
 
-- __pager__ `"bootstrap-lg"`
+`bootstrap-lg`
 
 Extend `"bootstrap"` with `options = { attrUl: { "class": "pagination pagination-lg" } }`
 
-- __cell__ `"bootstrap-button"`
+### cell
+
+`bootstrap-button`
 
 Render a button with an optional icon (from glyphicon or font-awesome)
 
@@ -71,7 +77,7 @@ options = {
 }
 ```
 
-- __cell__ `"fa-button"`
+`fa-button`
 
 Extend `"bootstrap-button"` with `options = { "icons": "fa" }`
 
@@ -82,7 +88,9 @@ Extend `"bootstrap-button"` with `options = { "icons": "fa" }`
 
 Use it with Bootstrap 2.
 
-- __sorter__ `"bootstrap"`
+### sorter
+
+`bootstrap`
 
 ```javascript
 options = {
@@ -92,19 +100,21 @@ options = {
 }
 ```
 
-- __sorter__ `"bootstrap-chevron"`
+`bootstrap-chevron`
 
 Extend `"bootstrap"` with `options = {}`
 
-- __sorter__ `"bootstrap-arrow"`
+`bootstrap-arrow`
 
 Extend `"bootstrap"` with `options = { "icons": "arrow" }`
 
-- __sorter__ `"bootstrap-load"`
+`bootstrap-load`
 
 Extend `"bootstrap"` with `options = { "icons": "load" }`
 
-- __pager__ `"bootstrap"`
+### pager
+
+`bootstrap`
 
 Extend `"default"` with `options`:
 
@@ -123,15 +133,17 @@ options = {
 }
 ```
 
-- __pager__ `"bootstrap-center"`
+`bootstrap-center`
 
 Extend `"bootstrap"` with `options = { attrUl: { "class": "pagination pagination-centered" } }`
 
-- __pager__ `"bootstrap-right"`
+`bootstrap-right`
 
 Extend `"bootstrap"` with `options = { attrUl: { "class": "pagination pagination-right" } }`
 
-- __cell__ `"bootstrap-button"`
+### cell
+
+`bootstrap-button`
 
 Render a button with an optional icon
 
