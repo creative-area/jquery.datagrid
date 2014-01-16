@@ -92,7 +92,7 @@
             source: {
                 "default": function( sourceOptions ) {
                     var self = this;
-                    $.post( self.settings.url, self.params, function( result ) {
+                    $.post( self.settings.url, self.params(), function( result ) {
                         self.render( result );
                     } );
                 }
@@ -232,13 +232,14 @@
             this.settings.col[i] = $.extend( {}, defaultsColumn, this.settings.col[i] );
         }
 
-        // init default params
-        this.params = {};
-        this.params[ this.settings.paramsMapping.page ] = 1;
-        this.params[ this.settings.paramsMapping.paging ] = 15; // 0 for no paging
-        this.params[ this.settings.paramsMapping.orderby ] = "";
-        this.params[ this.settings.paramsMapping.direction ] = "";
-        this.params = $.extend( this.params, this.settings.paramsDefault );
+        // init default _params
+        this._params = {};
+        this._params[ this.settings.paramsMapping.page ] = 1;
+        this._params[ this.settings.paramsMapping.paging ] = 15; // 0 for no paging
+        this._params[ this.settings.paramsMapping.orderby ] = "";
+        this._params[ this.settings.paramsMapping.direction ] = "";
+        // TODO : test sans =
+        this._params = $.extend( this._params, this.settings.paramsDefault );
 
         this.tools = tools;
 
@@ -254,12 +255,17 @@
             if ( this.settings["autoload"] ) this.fetch();
         },
 
+        // get params
+        params: function() {
+            return this._params;
+        },
+
         // get / set page
         page: function( page ) {
             if ( page === undefined ) {
-                return this.params[ this.settings.paramsMapping.page ];
+                return this._params[ this.settings.paramsMapping.page ];
             } else {
-                this.params[ this.settings.paramsMapping.page ] = page;
+                this._params[ this.settings.paramsMapping.page ] = page;
             }
         },
 
@@ -271,7 +277,7 @@
             
             // extend default params with filters
             if ( filters ) {
-                $.extend( this.params, filters );
+                $.extend( this._params, filters );
             }
 
             // loading
@@ -361,8 +367,8 @@
                                 .on( "click", function() {
                                     
                                     self.page( 1 );
-                                    self.params[ self.settings.paramsMapping.orderby ] = $(this).data( "field" );
-                                    self.params[ self.settings.paramsMapping.direction ] = ( $(this).data( "direction" ) ) ? "asc" : "desc";
+                                    self._params[ self.settings.paramsMapping.orderby ] = $(this).data( "field" );
+                                    self._params[ self.settings.paramsMapping.direction ] = ( $(this).data( "direction" ) ) ? "asc" : "desc";
                                     
                                     self.settings.col[ $(this).data( "colIndex" ) ].sortableDefaultAsc = !self.settings.col[ $(this).data( "colIndex" ) ].sortableDefaultAsc;
                                     
@@ -370,7 +376,7 @@
                                     
                                 });
                             
-                            if ( self.params[ self.settings.paramsMapping.orderby ] == self.settings.col[i].field ) {
+                            if ( self._params[ self.settings.paramsMapping.orderby ] == self.settings.col[i].field ) {
                                 
                                 var ascendant = !self.settings.col[i].sortableDefaultAsc;
                                 
@@ -404,14 +410,14 @@
                 
                 // pager
                 if ( $.inArray( "top", this.settings.pagerPosition ) >= 0 ) {
-                    this.$el.append( this.getPager( this.params[ this.settings.paramsMapping.page ], Math.ceil( total / this.params[ this.settings.paramsMapping.paging ] ) ) );
+                    this.$el.append( this.getPager( this._params[ this.settings.paramsMapping.page ], Math.ceil( total / this._params[ this.settings.paramsMapping.paging ] ) ) );
                 }
                 
                 this.$el.append( table );
                 
                 // pager
                 if ( $.inArray( "bottom", this.settings.pagerPosition ) >= 0 ) {
-                    this.$el.append( this.getPager( this.params[ this.settings.paramsMapping.page ], Math.ceil( total / this.params[ this.settings.paramsMapping.paging ] ) ) );
+                    this.$el.append( this.getPager( this._params[ this.settings.paramsMapping.page ], Math.ceil( total / this._params[ this.settings.paramsMapping.paging ] ) ) );
                 }
                 
             } else {
@@ -586,17 +592,17 @@
                     case "checkbox":
                         var isMultiple = ( $element[0].name.substr(-2) == "[]" );
                         if ( isMultiple ) {
-                            self.params[ $element[0].name ] = [];
+                            self._params[ $element[0].name ] = [];
                             selector.find( "[name='" + $element[0].name + "']" ).each( function() {
-                                if ( this.checked ) self.params[ $element[0].name ].push( $(this).val() );
+                                if ( this.checked ) self._params[ $element[0].name ].push( $(this).val() );
                             });
                         } else {
-                            self.params[ $element[0].name ] = ( $element[0].checked ) ? $element.val() : '';
+                            self._params[ $element[0].name ] = ( $element[0].checked ) ? $element.val() : '';
                         }
                     break;
                     
                     default:
-                        self.params[ $element[0].name ] = $element.val();
+                        self._params[ $element[0].name ] = $element.val();
                     break;
                 }
                 self.page( 1 );
@@ -677,7 +683,7 @@
             }
 
             // Get datagrid instance
-            if (options === "datagrid") {
+            if (options === pluginName) {
                 return this.data("plugin_" + pluginName);
             }
 

@@ -125,33 +125,70 @@ List of `option names` ( *expected values* )
 
 ### Cell Rendering
 
-How to display `td` content depends on column `render` value:
+How to display `td` content depends on column `render` value.
 
-- `"plugin-name"` : use a plugin registered with `plugin-name`. Default plugin (`"default"`) display `field` value.
-- `{ "plugin-name": params }` : use a registered plugin `plugin-name`, with `params`.
-- `function( data )` : return content displayed in `td`. Scope is the `$(td)` in the callback. `data` is an object like this:
+- Use a plugin registered with `"plugin-name"` (`"default"` plugin just display `field` value)
 
 ```javascript
-data = {
-	value: "the value of the field key",
-	field: "the field key name",
-	row: "row data object (row.fieldname = value)", 
-	colindex: "column number (first is 0)"
+{
+	...
+	render: "plugin-name",
+	...
+}
+```
+
+- Use a registered plugin `"plugin-name"` with `params`
+
+```javascript
+$( selector ).datagrid({
+	...
+	col: [{
+		...
+		render: { "plugin-name": params },
+		...
+	}, ...],
+	...
+});
+```
+
+- Use a callback function
+
+```javascript
+{
+	render: function( data ){
+		// scope (this) is the `$(td)` in the callback
+		// fill `td` with `$(td).html( returned value )`
+		return data.value;
+
+		// if you return false, `td` content will not be changed
+		// you can update cell with `this.html()`, `this.append()`, ...
+		this.html( data.value );
+		return false;
+
+		// `data` is an object like this
+		data = {
+			value: "the value of the field key",
+			field: "the field key name",
+			row: "row data object (row.fieldname = value)", 
+			colindex: "column number (first is 0)"
+		}
+	}
 }
 ```
 
 
+
 # Flow of data and events
 
-### Get Data
+### Fetch
 
-To get the data and launch the flow, you need to call `datagrid.fetch( filters )`<br>
+To fetch data and launch the flow, you need to call `datagrid.fetch( filters )`<br>
 It will be automatically executed when `option.autoload = true`.
 
-`filters` is an object of attribute-value pairs. They are merged with paging and sorting params and send when fetching data.
+`filters` is an optional object of attribute-value pairs. They are merged with paging and sorting params and send when fetching data.
 
 ```javascript
-// Scope in the callback is `datagrid` (the plugin).
+// Scope (this) in the callback is `datagrid` (the plugin).
 "onBefore()" event is called (if defined) before fetching data.
 ```
 
@@ -159,11 +196,15 @@ How data is fetch depends on `source` option:
 
 - **string** : a plugin will be used (if it exists). `"default"` plugin use `$.post( options.url )` to get data. *see __Source plugin__ below*
 
-- **function** : `$.when( options.source( params ) )` is used. Scope in the callback is `datagrid` object.
-
-Data is parsed with `source` method. By default, if returned data is a JSON string, it will be changed with `JSON.parse()`.
+- **function** : `$.when( options.source( params ) )` is used. Scope (this) in the callback is `datagrid` object.
 
 After data is fetched from the source, `datagrid.render( data )` is called.
+
+### Parse
+
+Data is parsed by `parse()` method. Default method parse data with `JSON.parse()` (if data is a string).
+
+Method can be changed with datagrid `parse` option.
 
 ### Data Format
 
@@ -185,7 +226,7 @@ Data format expected to render the datagrid is an object like this:
 }
 ```
 
-### Render Data
+### Render
 
 HTML table is displayed when `datagrid.render( data )` method is called.
 
@@ -210,37 +251,63 @@ Each cell is displayed (*see cell rendering*)
 ```
 
 
+
 # Methods
 
 Methods can be called in 2 ways:
 
+- With selector used to create datagrid
+
 ```javascript
-// with selector used to create datagrid
 $( selector ).datagrid( "methodName", methodParams );
+```
 
-// or with a reference to the datagrid instance
+- Or with a reference to the datagrid instance
+
+```javascript
 datagrid.methodName( methodParams );
+```
 
-// you can get a reference to the datagrid instance with
+You can get a reference to the datagrid instance with
+
+```javascript
 $( selector ).datagrid( "datagrid" );
+
 // it's chainable
 $( selector ).datagrid( "datagrid" ).methodName( methodParams );
 ```
 
 ### Methods list
 
-- `datagrid.fetch( filters )` : fetch source and render data. `filers` are optionals.
-- `datagrid.page()` : get page number (first page is 1).
-- `datagrid.page( page )` : set page number used in `fetch()`.
-- `datagrid.getParams()` : get params used for data request.
-- `datagrid.render( data )` : render data. Called internally when data are fetched.
-- `datagrid.filters( selector )` : define selected form element(s) (and his children) as automatic filters. *see __Filters__ below*
+```javascript
+// fetch source (get data). `filters` is an object of attribute-value pairs (optional).
+$( selector ).datagrid( "fetch", filters );
+```
 
-### Tools
+```javascript
+// get page number (first page is 1).
+$( selector ).datagrid( "page" );
+```
 
-Helper tools are in `datagrid.tools` namespace.
+```javascript
+// set page number. `fetch()` is not called.
+$( selector ).datagrid( "page", page );
+```
 
-- `datagrid.tools.getPagerLimits( behavior, lastpage )` : helper method for pager plugin. *see __Pager plugin__ below*
+```javascript
+// get params used for data request.
+$( selector ).datagrid( "params" );
+```
+
+```javascript
+// render HTML table.
+$( selector ).datagrid( "render", data );
+```
+
+```javascript
+// define selected form element(s) (and children) as automatic filters. *see __Filters__ below*
+$( selector ).datagrid( "filters", selector );
+```
 
 
 # Filters
@@ -264,20 +331,21 @@ All form elements (input, select, taxtarea) contents in the `$element` win a `ch
 The changed element value is added to the sent params (key is the html element name).
 
 
+
 # Plugins
 
 All plugins are added like this
 
 ```javascript
 // "pluginType" is a String : allowed values are "source", "cell", "sorter" or "pager".
-// "pluginName" is what you want. If you use "default" name, you'll override default plugin.
+// "pluginName" is what you want. If you use "default" name, you'll change default plugin.
 $.fn.datagrid( "plugin", "pluginType", "pluginName", callbackFunction );
 ```
 
 You can also extend existing plugins
 
 ```javascript
-// "extendedPluginName" is the name of the plugin extended (the "source"). You can extend "default" plugins.
+// "extendedPluginName" is the name of the plugin extended (the "source"). You can extend "default" plugin.
 // "extendedOptions" are passed as arguments to "extendedPluginName" when "newPluginName" is called.
 $.fn.datagrid( "plugin", "pluginType", "newPluginName", "extendedPluginName", extendedOptions );
 ```
@@ -308,13 +376,13 @@ $( selector ).datagrid({
 
 ## Source plugin
 
-Source plugin is used to get the data. You need to call `self.render()` to display the HTML table.
+Source plugin is used to fetch data. You need to call `self.render()` to display the HTML table.
 
 ```javascript
 // example: "get" instead of "post" ajax
 $.fn.datagrid( "plugin", "source", "get", function( sourceOptions ) {
     var self = this; // this is the instance of the datagrid plugin
-    $.get( self.settings.url, self.params, function( result ) {
+    $.get( self.settings.url, self.params(), function( result ) {
         self.render( result );
     });
 });
