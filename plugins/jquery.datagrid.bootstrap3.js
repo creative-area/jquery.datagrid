@@ -86,6 +86,7 @@
 				icons: "glyphicon", // "glyphicon", "fa" (font-awesome)
 				style: false, // "primary", "info", "success", "warning", "danger", "inverse"
 				size: false, // "lg", "sm", "xs"
+				classes: false, // add css class
 				icon: false,
 				value: data.value
 			};
@@ -95,6 +96,7 @@
 			return "<button class='btn" 
 				+ ( (options.style) ? " btn-"+options.style : "" ) 
 				+ ( (options.size) ? " btn-"+options.size : "" ) 
+				+ ( (options.classes) ? " "+options.classes : "" ) 
 				+ "'>" 
 				+ ( (options.icon) ? "<i class='" + options.icons + " " + options.icons + "-" + options.icon + "'></i> " : "" ) 
 				+ options.value + "</button>";
