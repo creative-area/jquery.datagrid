@@ -5,7 +5,7 @@
         "authors": [
                 "Creative Area <contact@creative-area.net>"
         ],
-        "description": "UI less datagrid: jquery plugin",
+        "description": "datagrid (jquery plugin)",
         "main": "jquery.datagrid.js",
         "keywords": [
                 "jquery",

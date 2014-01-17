@@ -151,6 +151,13 @@
                         container.append( ul );
                         container = ul;
                     }
+
+                    // events
+                    container.on( "click", "." + pluginName + "-page", function(e) {
+                        e.preventDefault();
+                        datagrid.page( $(this).data( "page" ) );
+                        datagrid.fetch();
+                    });
                     
                     // default limits (all pages)
                     var pagerLimits = {
@@ -170,10 +177,7 @@
                         } else {
                             element = $("<" + options.item + ">", {
                                 data: { "page": gopage },
-                                click: function() {
-                                    datagrid.page( $(this).data( "page" ) );
-                                    datagrid.fetch();
-                                }
+                                "class": pluginName + "-page"
                             });
                         }
                         if ( element ) {
@@ -193,11 +197,8 @@
                         container.append(
                             $("<" + options.item + ">", {
                                 data: { "page": i },
-                                click: function() {
-                                    datagrid.page( $(this).data( "page" ) );
-                                    datagrid.fetch();
-                                },
-                                attr: ( page == i ) ? options.attrItemActive : {}
+                                attr: ( page == i ) ? options.attrItemActive : {},
+                                "class": pluginName + "-page"
                             })
                             .append(
                                 ( options.link ) ? $("<a>").html( options.before + i + options.after ) : options.before + i + options.after
@@ -364,6 +365,7 @@
                                 })
                                 .css( "cursor", "pointer" )
                                 .attr( self.settings.attrSortable )
+                                .addClass( pluginName + "-sortable" )
                                 .on( "click", function() {
                                     
                                     self.page( 1 );
@@ -387,6 +389,18 @@
                         
                         return th;
                     });
+
+                    // events
+                    // tr.on( "click", "." + pluginName + "-sortable", function(e) {
+                    //     e.preventDefault();
+                    //     self.page( 1 );
+                    //     self._params[ self.settings.paramsMapping.orderby ] = $(this).data( "field" );
+                    //     self._params[ self.settings.paramsMapping.direction ] = ( $(this).data( "direction" ) ) ? "asc" : "desc";
+                        
+                    //     self.settings.col[ $(this).data( "colIndex" ) ].sortableDefaultAsc = !self.settings.col[ $(this).data( "colIndex" ) ].sortableDefaultAsc;
+                        
+                    //     self.fetch();
+                    // });
                 }
                 table.append( thead.append( tr ) );
                 for ( var row = 0 ; row < result.data.length ; row++ ) {

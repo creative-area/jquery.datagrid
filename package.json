@@ -1,7 +1,7 @@
 {
         "name": "jquery.datagrid",
         "title": "jquery datagrid",
-        "description": "UI less datagrid: jquery plugin",
+        "description": "datagrid (jquery plugin)",
         "author": "Creative Area",
         "repository": {
                 "type" : "git",
