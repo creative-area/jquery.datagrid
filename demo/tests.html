@@ -51,7 +51,7 @@
 				behavior: { "sliding": { "pages": 4 } },
 			}},
 			pagerPosition: ["top","bottom"],
-			paramsDefault: {paging:10}
+			paramsDefault: {paging:10, Continent: $("#ContinentDemoFilters").val()}
 		})
 		.datagrid( "filters", $("#dg-filters") );
 
@@ -87,7 +87,7 @@
 									<option value="">Continents - all</option>
 									<option value="Africa">Africa</option>
 									<option value="Antarctica">Antarctica</option>
-									<option value="Asia">Asia</option>
+									<option value="Asia" selected>Asia</option>
 									<option value="Europe">Europe</option>
 									<option value="North America">North America</option>
 									<option value="Oceania">Oceania</option>

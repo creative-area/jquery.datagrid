@@ -187,6 +187,8 @@ It will be automatically executed when `option.autoload = true`.
 
 `filters` is an optional object of attribute-value pairs. They are merged with paging and sorting params and send when fetching data.
 
+Fetching data do not reset previous params (usefull with auto filters). You can reset params to default with `reset()` method.
+
 ```javascript
 // Scope (this) in the callback is `datagrid` (the plugin).
 "onBefore()" event is called (if defined) before fetching data.
@@ -287,16 +289,38 @@ $( selector ).datagrid( "fetch", filters );
 ```javascript
 // get page number (first page is 1).
 $( selector ).datagrid( "page" );
-```
-
-```javascript
 // set page number. `fetch()` is not called.
 $( selector ).datagrid( "page", page );
 ```
 
 ```javascript
+// get paging number (default paging is 15).
+$( selector ).datagrid( "paging" );
+// set paging number. `fetch()` is not called.
+$( selector ).datagrid( "paging", paging );
+```
+
+```javascript
+// get orderby (default orderby is "").
+$( selector ).datagrid( "orderby" );
+// set orderby. `fetch()` is not called.
+// sorter plugin use field name.
+$( selector ).datagrid( "orderby", orderby );
+```
+
+```javascript
+// get direction (default direction is "").
+$( selector ).datagrid( "direction" );
+// set direction. `fetch()` is not called.
+// sorter plugin use "asc" or "desc".
+$( selector ).datagrid( "direction", direction );
+```
+
+```javascript
 // get params used for data request.
 $( selector ).datagrid( "params" );
+// reset params to default.
+$( selector ).datagrid( "reset" );
 ```
 
 ```javascript

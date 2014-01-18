@@ -152,7 +152,7 @@
                         container = ul;
                     }
 
-                    // events
+                    // pager events
                     container.on( "click", "." + pluginName + "-page", function(e) {
                         e.preventDefault();
                         datagrid.page( $(this).data( "page" ) );
@@ -239,8 +239,10 @@
         this._params[ this.settings.paramsMapping.paging ] = 15; // 0 for no paging
         this._params[ this.settings.paramsMapping.orderby ] = "";
         this._params[ this.settings.paramsMapping.direction ] = "";
-        // TODO : test sans =
-        this._params = $.extend( this._params, this.settings.paramsDefault );
+        
+        $.extend( this._params, this.settings.paramsDefault );
+        // backup default params for reset
+        this._paramsDefault = $.extend( {}, this._params, this.settings.paramsDefault );
 
         this.tools = tools;
 
@@ -261,12 +263,44 @@
             return this._params;
         },
 
+        // reset params
+        reset: function() {
+            return this._params = $.extend( {}, this._paramsDefault );;
+        },
+
         // get / set page
         page: function( page ) {
             if ( page === undefined ) {
                 return this._params[ this.settings.paramsMapping.page ];
             } else {
                 this._params[ this.settings.paramsMapping.page ] = page;
+            }
+        },
+
+        // get / set paging
+        paging: function( paging ) {
+            if ( paging === undefined ) {
+                return this._params[ this.settings.paramsMapping.paging ];
+            } else {
+                this._params[ this.settings.paramsMapping.paging ] = paging;
+            }
+        },
+
+        // get / set orderby
+        orderby: function( orderby ) {
+            if ( orderby === undefined ) {
+                return this._params[ this.settings.paramsMapping.orderby ];
+            } else {
+                this._params[ this.settings.paramsMapping.orderby ] = orderby;
+            }
+        },
+
+        // get / set direction
+        direction: function( direction ) {
+            if ( direction === undefined ) {
+                return this._params[ this.settings.paramsMapping.direction ];
+            } else {
+                this._params[ this.settings.paramsMapping.direction ] = direction;
             }
         },
 
@@ -365,21 +399,10 @@
                                 })
                                 .css( "cursor", "pointer" )
                                 .attr( self.settings.attrSortable )
-                                .addClass( pluginName + "-sortable" )
-                                .on( "click", function() {
-                                    
-                                    self.page( 1 );
-                                    self._params[ self.settings.paramsMapping.orderby ] = $(this).data( "field" );
-                                    self._params[ self.settings.paramsMapping.direction ] = ( $(this).data( "direction" ) ) ? "asc" : "desc";
-                                    
-                                    self.settings.col[ $(this).data( "colIndex" ) ].sortableDefaultAsc = !self.settings.col[ $(this).data( "colIndex" ) ].sortableDefaultAsc;
-                                    
-                                    self.fetch();
-                                    
-                                });
+                                .addClass( pluginName + "-sortable" );
                             
-                            if ( self._params[ self.settings.paramsMapping.orderby ] == self.settings.col[i].field ) {
-                                
+                            if ( self.orderby() == self.settings.col[i].field ) {
+
                                 var ascendant = !self.settings.col[i].sortableDefaultAsc;
                                 
                                 // event : sorter
@@ -389,19 +412,23 @@
                         
                         return th;
                     });
-
-                    // events
-                    // tr.on( "click", "." + pluginName + "-sortable", function(e) {
-                    //     e.preventDefault();
-                    //     self.page( 1 );
-                    //     self._params[ self.settings.paramsMapping.orderby ] = $(this).data( "field" );
-                    //     self._params[ self.settings.paramsMapping.direction ] = ( $(this).data( "direction" ) ) ? "asc" : "desc";
-                        
-                    //     self.settings.col[ $(this).data( "colIndex" ) ].sortableDefaultAsc = !self.settings.col[ $(this).data( "colIndex" ) ].sortableDefaultAsc;
-                        
-                    //     self.fetch();
-                    // });
                 }
+
+                // sorter events
+                tr.on( "click", "." + pluginName + "-sortable", function(e) {
+                    e.preventDefault();
+                    
+                    var $this = $(this);
+
+                    self.page( 1 );
+                    self.orderby( $this.data( "field" ) );
+                    self.direction( ( $this.data( "direction" ) ) ? "asc" : "desc" );
+
+                    self.settings.col[ $this.data( "colIndex" ) ].sortableDefaultAsc = !self.settings.col[ $this.data( "colIndex" ) ].sortableDefaultAsc;
+                    
+                    self.fetch();
+                });
+
                 table.append( thead.append( tr ) );
                 for ( var row = 0 ; row < result.data.length ; row++ ) {
                     tr = $( "<tr>" );
