@@ -600,6 +600,7 @@
         // auto filters
         filters: function( selector ) {
             var self = this;
+            if ( $.type( selector ) === "string" ) selector = $( selector );
             selector.each( function() {
                 $selector = $(this);
                 switch ( this.tagName ) {
