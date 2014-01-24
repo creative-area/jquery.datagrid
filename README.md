@@ -181,20 +181,46 @@ Fetching data do not reset previous params (usefull with auto filters). You can 
 "onBefore()" event is called (if defined) before fetching data.
 ```
 
-How data is fetch depends on `source` option
+How data is fetched depends on `source` option type:
 
-**string**
+#### string
 
-Plugin will be used (if it exists).<br>
+Plugin will be used (if it exists).
+
 `"default"` plugin use `$.post( options.url )` to get data. *see __Source plugin__ below*
 
-**deferred function**
+#### deferred function  
 
-`$.when( options.source() )` is used.<br>
-Scope (this) in the callback is the datagrid instance.<br>
-So you can get datagrid params with `params()` method.<br>
-After data is fetched from source, `render( data )` is called automatically.
+`$.when( options.source() )` is used.
 
+Scope (`this`) in the callback is the datagrid instance.
+
+So you can get datagrid params with `params()` method.
+
+After data is fetched from source, `render( data )` is called automatically when you `defer.resolve( data )`.
+
+```javascript
+// example with deferred $.get()
+"source": function() {
+    return $.get( "url", this.params() );
+}
+```
+
+```javascript
+// example with deferred function
+"source": function() {
+    return $.Deferred(function( defer ) {
+        async_call( 
+            callback_success( data ) {
+                defer.resolve( data );
+            },
+            callback_error( error ) {
+                defer.reject( error );
+            }
+        );
+    }).promise();
+}
+```
 
 ### Parse
 
