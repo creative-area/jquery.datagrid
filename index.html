@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	<meta charset="utf-8">
+	<title>jQuery Datagrid</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="jQuery Datagrid">
+	<meta name="author" content="Creative Area">
+	
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.0/marked.js"></script>
+	
+	<script type="text/javascript" src="jquery.datagrid.js"></script>
+	<script type="text/javascript" src="plugins/jquery.datagrid.bootstrap3.js"></script>
+	<script type="text/javascript" src="http://labs.creative-area.net/js/prettify.js"></script>
+
+	<script type="text/javascript">
+	$( document ).ready( function() {
+		var $doc = $( "#doc" );
+		$.get( "README.md", function( md ) {
+			marked( md, function(err, content) {
+				$doc.html( content );
+
+				// highlight code
+				$doc.find( "pre" ).addClass( "prettyprint" );
+				prettyPrint();
+			});
+		});
+	});
+	</script>
+	
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.min.css" rel="stylesheet">
+	<link href="http://labs.creative-area.net/css/prettify-ca.css" rel="stylesheet">
+	
+	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	
+	<style>
+	a { cursor: pointer;}
+	.dg div span { cursor: pointer;}
+	</style>
+	</head>
+	
+	<body>
+		<div class="container" id="doc"></div>
+	</body>
+</html>
