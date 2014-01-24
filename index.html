@@ -7,7 +7,7 @@
 	<meta name="description" content="jQuery Datagrid">
 	<meta name="author" content="Creative Area">
 	
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.0/marked.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.js"></script>
 
@@ -17,16 +17,21 @@
 		$.get( "README.md", function( md ) {
 			marked( md, function(err, content) {
 				$doc.html( content );
+				$doc.find( "h1:first" ).remove();
 
 				// highlight code
 				$doc.find( "pre" ).addClass( "prettyprint" );
 				prettyPrint();
+
+				// change link to demo for local
+                $( "a[href='http://labs.creative-area.net/jquery.datagrid/demo/']" ).attr( "href", "./demo/" );
 			});
 		});
 	});
 	</script>
 	
-	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css">
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.min.css" rel="stylesheet">
 	<link href="http://labs.creative-area.net/css/prettify.css" rel="stylesheet">
 	
 	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -37,6 +42,13 @@
 	</head>
 	
 	<body>
-		<div class="container" id="doc"></div>
+		<a href="https://github.com/creative-area/jquery.datagrid"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+
+		<div class="container">
+			<h1>jQuery datagrid <small>- doc - <a href="demo/">demo</a></small></h1>
+			<hr>
+			<div id="doc"></div>
+		</div>
+		
 	</body>
 </html>

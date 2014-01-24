@@ -7,12 +7,12 @@
 	<meta name="description" content="jQuery Datagrid">
 	<meta name="author" content="Creative Area">
 	
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.js"></script>
 	
 	<script type="text/javascript" src="../jquery.datagrid.js"></script>
 	<script type="text/javascript" src="../plugins/jquery.datagrid.bootstrap3.js"></script>
-	<script type="text/javascript" src="http://labs.creative-area.net/js/prettify.js"></script>
 
 	<script type="text/javascript">
 	$( document ).ready( function() {
@@ -135,9 +135,55 @@
 			pager: "bootstrap",
 			paramsDefault: {paging:20}
 		});
-		dg3.datagrid( "filters", $("#dg-demo-filters-area") );
-		// dg3.datagrid( "datagrid" ).filters( $("#dg-demo-filters-area") );
+		dg3.datagrid( "filters", "#dg-demo-filters-area" );
+		// dg3.datagrid( "datagrid" ).filters( "#dg-demo-filters-area" );
 		
+		// events
+		$eventsInfo = $( "#dg-demo-events-info" );
+		$eventsArea = $( "#dg-demo-events-area" );
+		var dg4 = $( "#dg-demo-events" ).datagrid({
+			url: "data/demo-simple.php",
+			col: [{
+				field: "Continent",
+				title: "Continent",
+				sortable: true
+			},{
+				field: "Name",
+				title: "Name",
+				sortable: true
+			},{
+				field: "Population",
+				title: "Population",
+				sortable: true
+			},{
+				field: "SurfaceArea",
+				title: "Surface",
+				sortable: true
+			}],
+			attr: { "class": "table table-bordered table-condensed" },
+			sorter: "bootstrap",
+			pager: "bootstrap",
+			paramsDefault: {paging:20},
+			onBefore: function() {
+				$eventsInfo.html( "Datagrid loading ..." );
+				$eventsArea.hide();
+			},
+			onData: function( data ) {
+				$eventsInfo.html( data.total + " countries" );
+			},
+			onRowData: function( data, num, $tr ) {
+				if ( data.Population > 10000000 ) {
+					$tr.addClass( "success" );
+				} else if ( data.Population < 100 ) {
+					$tr.addClass( "danger" );
+				}
+			},
+			onComplete: function() {
+				$eventsArea.show();
+			}
+		});
+		dg4.datagrid( "filters", $eventsArea );
+
 		// tab
 		$('#demo-tabs a:first').tab('show')
 
@@ -148,7 +194,7 @@
 	
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
 	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.min.css" rel="stylesheet">
-	<link href="http://labs.creative-area.net/css/prettify-ca.css" rel="stylesheet">
+	<link href="http://labs.creative-area.net/css/prettify.css" rel="stylesheet">
 	
 	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 	<!--[if lt IE 9]>
@@ -166,8 +212,9 @@
 		<a href="https://github.com/creative-area/jquery.datagrid"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
 
 		<div class="container">
-			<h1>jQuery datagrid <small>demo</small></h1>
-
+			<h1>jQuery datagrid <small>- <a href="../">doc</a> - demo</small></h1>
+			<hr>
+			
 			<!-- Nav tabs -->
 			<ul class="nav nav-pills" id="demo-tabs">
 				<li><a href="#demo-simple" data-toggle="tab" data-dg="simple">Simple</a></li>
@@ -386,16 +433,73 @@
 
 // just pass a $element to the filters method
 // works with all form elements
-dg3.datagrid( "filters", $("#dg-demo-filters-area") );
+dg3.datagrid( "filters", "#dg-demo-filters-area" );
 
 // you can also use .datagrid( "datagrid" ) method
-// dg3.datagrid( "datagrid" ).filters( $("#dg-demo-filters-area") );</pre>
+// dg3.datagrid( "datagrid" ).filters( "#dg-demo-filters-area" );</pre>
 							
 						</div>
 					</div>
 				</div>
 				
 				<div class="tab-pane" id="demo-events">
+					<div class="row">
+						
+						<div class="col-sm-6">
+							<h3>Events</h3>
+							<div id="dg-demo-events-area">
+								<p id="dg-demo-events-info"></p>
+								<form class="form-inline" role="form">
+									<label class="sr-only" for="ContinentDemoEvents">Continent</label>
+									<select name="Continent" id="ContinentDemoEvents" class="form-control">
+										<option value="">Continents - all</option>
+										<option value="Africa">Africa</option>
+										<option value="Antarctica">Antarctica</option>
+										<option value="Asia">Asia</option>
+										<option value="Europe">Europe</option>
+										<option value="North America">North America</option>
+										<option value="Oceania">Oceania</option>
+										<option value="South America">South America</option>
+									</select>
+								</form>
+							</div>
+							<div id="dg-demo-events" class="dg"></div>
+						</div>
+
+						<div class="col-sm-6">
+							<h3>Options used</h3>
+							<pre class="prettyprint">// cache jquery elements
+$eventsInfo = $( "#dg-demo-events-info" );
+$eventsArea = $( "#dg-demo-events-area" );
+
+// datagrid
+var dg4 = $( "#dg-demo-events" ).datagrid({
+    // same options as simple demo
+    // just add events options
+    onBefore: function() {
+        $eventsInfo.html( "Datagrid loading ..." );
+        $eventsArea.hide();
+    },
+    onData: function( data ) {
+        $eventsInfo.html( data.total + " countries" );
+    },
+    onRowData: function( data, num, $tr ) {
+        if ( data.Population &gt; 10000000 ) {
+            $tr.addClass( "success" );
+        } else if ( data.Population &lt; 100 ) {
+            $tr.addClass( "danger" );
+        }
+    },
+    onComplete: function() {
+        $eventsArea.show();
+    }
+});
+
+// filters
+dg4.datagrid( "filters", $eventsArea );</pre>
+							
+						</div>
+					</div>
 				</div>
 			</div>
 

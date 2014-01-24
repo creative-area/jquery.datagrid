@@ -1,6 +1,8 @@
 jquery.datagrid
 ===============
 
+*- draft version (0.1 soon)*
+
 - Fetch data from any source (ajax, deferred function or plugin)
 - Render a simple HTML Table easy to style (no imposed css)
 - Simple columns definition
@@ -8,6 +10,11 @@ jquery.datagrid
 - Plugins for cell, pager and sorter renderers (easy to create, very easy to extend)
 - Events on each step (you do what you want with your data)
 - Convert form elements (input, select) into automatic filters
+
+# Demo
+
+<a href="http://labs.creative-area.net/jquery.datagrid/demo/">View jquery.datagrid demo</a> *- soon (work on local)*
+
 
 # Configuration
 
@@ -255,7 +262,7 @@ HTML table is displayed when `datagrid.render( data )` method is called.
 
 ```javascript
 // Data is in expected format.
-// Must return changed data.
+// Data returned replace old data. Return false or nothing to not change data.
 "onData( data )" event is called (if defined).
 ```
 
@@ -263,7 +270,7 @@ If a `sorter` plugin is defined, click events are attached on `th` (if column `s
 
 ```javascript
 // Usefull to change attributes of a `tr`.
-// Must return changed data.
+// Data returned replace old data. Return false or nothing to not change data.
 "onRowData( rowdata, numrow, $tr )" event is called on each "tr" line (if defined).
 ```
 

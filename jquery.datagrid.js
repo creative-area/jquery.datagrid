@@ -1,7 +1,7 @@
 /*
  *  Project: jquery.datagrid
- *  Description: UI less datagrid
- *  Version: 0.1
+ *  Description: datagrid
+ *  Version: draft
  *  Author: Creative Area www.creative-area.net
  *  License: Dual licensed under the MIT or GPL Version 2 licenses.
  */
@@ -366,7 +366,7 @@
             total = ( result.total ) ? result.total : result.data.length;
             
             // event : onData
-            if ( $.type( this.settings.onData ) === "function" ) result = this.settings.onData( result );
+            if ( $.type( this.settings.onData ) === "function" ) result = ( this.settings.onData( result ) || result );
             
             // reset container
             if ( this.settings.resetContainer ) {
@@ -434,7 +434,7 @@
                     tr = $( "<tr>" );
                     
                     // event : onRowData
-                    if ( $.type( this.settings.onRowData ) === "function" ) result.data[ row ] = this.settings.onRowData( result.data[ row ], row, tr );
+                    if ( $.type( this.settings.onRowData ) === "function" ) result.data[ row ] = ( this.settings.onRowData( result.data[ row ], row, tr ) || result.data[ row ] );
                     
                     for ( i = 0 ; i < this.settings.col.length ; i++ ) {
                         var td = $( "<td>" ).attr( this.settings.col[ i ].attr );
