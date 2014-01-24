@@ -138,6 +138,9 @@
 		dg3.datagrid( "filters", $("#dg-demo-filters-area") );
 		// dg3.datagrid( "datagrid" ).filters( $("#dg-demo-filters-area") );
 		
+		// tab
+		$('#demo-tabs a:first').tab('show')
+
 		// highlight code
 		prettyPrint();
 	});
@@ -165,16 +168,27 @@
 		<div class="container">
 			<h1>jQuery datagrid <small>demo</small></h1>
 
-			<div class="row">
-				
-				<div class="col-sm-6">
-					<h3>Simple</h3>
-					<div id="dg-demo-simple" class="dg"></div>
-				</div>
+			<!-- Nav tabs -->
+			<ul class="nav nav-pills" id="demo-tabs">
+				<li><a href="#demo-simple" data-toggle="tab" data-dg="simple">Simple</a></li>
+				<li><a href="#demo-cell" data-toggle="tab" data-dg="cell">Cell rendering</a></li>
+				<li><a href="#demo-filters" data-toggle="tab" data-dg="filters">Filters</a></li>
+				<li><a href="#demo-events" data-toggle="tab" data-dg="events">Events</a></li>
+			</ul>
 
-				<div class="col-sm-6">
-					<h3>Options used</h3>
-					<pre class="prettyprint">{
+			<!-- Tab panes -->
+			<div class="tab-content">
+				<div class="tab-pane active" id="demo-simple">
+					<div class="row">
+						
+						<div class="col-sm-6">
+							<h3>Simple</h3>
+							<div id="dg-demo-simple" class="dg"></div>
+						</div>
+
+						<div class="col-sm-6">
+							<h3>Options used</h3>
+							<pre class="prettyprint">{
     // server url. data posted :
     // "page", "paging", "orderby", "direction"
     url: "data/demo-simple.php",
@@ -208,20 +222,22 @@
     // plugin used to display pagination
     pager: "bootstrap"
 }</pre>
-					
-				</div>
-			</div>
-
-			<div class="row">
-				
-				<div class="col-sm-6">
-					<h3>Cell rendering</h3>
-					<div id="dg-demo-cell-rendering" class="dg"></div>
+							
+						</div>
+					</div>
 				</div>
 
-				<div class="col-sm-6">
-					<h3>Options used</h3>
-					<pre class="prettyprint">{
+				<div class="tab-pane" id="demo-cell">
+					<div class="row">
+						
+						<div class="col-sm-6">
+							<h3>Cell rendering</h3>
+							<div id="dg-demo-cell-rendering" class="dg"></div>
+						</div>
+
+						<div class="col-sm-6">
+							<h3>Options used</h3>
+							<pre class="prettyprint">{
     // server url. data posted :
     // "page", "paging", "orderby", "direction"
     url: "data/demo-simple.php",
@@ -314,55 +330,57 @@
     // plugin used to display pagination
     pager: "bootstrap"
 }</pre>
-					
-				</div>
-			</div>
-
-			<div class="row">
-				
-				<div class="col-sm-6">
-					<h3>Filters</h3>
-					<div id="dg-demo-filters-area">
-						<form class="form-inline" role="form">
-							<div class="form-group" style="width:115px;">
-								<label class="sr-only" for="ContinentDemoFilters">Continent</label>
-								<select name="Continent" id="ContinentDemoFilters" class="form-control">
-									<option value="">Continents - all</option>
-									<option value="Africa">Africa</option>
-									<option value="Antarctica">Antarctica</option>
-									<option value="Asia">Asia</option>
-									<option value="Europe">Europe</option>
-									<option value="North America">North America</option>
-									<option value="Oceania">Oceania</option>
-									<option value="South America">South America</option>
-								</select>
-							</div>
-							<div class="form-group" style="width:120px;">
-								<label class="sr-only" for="PopulationDemoFilters">Continent</label>
-								<select name="PopulationInterval" id="PopulationDemoFilters" class="form-control">
-									<option value="">Populations - all</option>
-									<option value="1">Inf 1 million</option>
-									<option value="2">Between 1 and 100 millions</option>
-									<option value="3">Sup 100 millions</option>
-								</select>
-							</div>
-							<div class="form-group" style="width:210px;">
-								<label class="sr-only" for="SurfaceAreaDemoFilters">Surface</label>
-								<select name="SurfaceArea" id="SurfaceAreaDemoFilters" class="form-control" multiple="multiple" size="4">
-									<option value="" disabled>Surfaces</option>
-									<option value="1">&gt; 1 000 000</option>
-									<option value="2">&gt; 100 000 &amp; &lt; 1 000 000</option>
-									<option value="3">&lt; 100 000</option>
-								</select>
-							</div>
-						</form>
+							
+						</div>
 					</div>
-					<div id="dg-demo-filters" class="dg"></div>
 				</div>
 
-				<div class="col-sm-6">
-					<h3>Options used</h3>
-					<pre class="prettyprint">var dg3 = $( "#dg-demo-filters" ).datagrid({
+				<div class="tab-pane" id="demo-filters">
+					<div class="row">
+						
+						<div class="col-sm-6">
+							<h3>Filters</h3>
+							<div id="dg-demo-filters-area">
+								<form class="form-inline" role="form">
+									<div class="form-group" style="width:115px;">
+										<label class="sr-only" for="ContinentDemoFilters">Continent</label>
+										<select name="Continent" id="ContinentDemoFilters" class="form-control">
+											<option value="">Continents - all</option>
+											<option value="Africa">Africa</option>
+											<option value="Antarctica">Antarctica</option>
+											<option value="Asia">Asia</option>
+											<option value="Europe">Europe</option>
+											<option value="North America">North America</option>
+											<option value="Oceania">Oceania</option>
+											<option value="South America">South America</option>
+										</select>
+									</div>
+									<div class="form-group" style="width:120px;">
+										<label class="sr-only" for="PopulationDemoFilters">Continent</label>
+										<select name="PopulationInterval" id="PopulationDemoFilters" class="form-control">
+											<option value="">Populations - all</option>
+											<option value="1">Inf 1 million</option>
+											<option value="2">Between 1 and 100 millions</option>
+											<option value="3">Sup 100 millions</option>
+										</select>
+									</div>
+									<div class="form-group" style="width:210px;">
+										<label class="sr-only" for="SurfaceAreaDemoFilters">Surface</label>
+										<select name="SurfaceArea" id="SurfaceAreaDemoFilters" class="form-control" multiple="multiple" size="4">
+											<option value="" disabled>Surfaces</option>
+											<option value="1">&gt; 1 000 000</option>
+											<option value="2">&gt; 100 000 &amp; &lt; 1 000 000</option>
+											<option value="3">&lt; 100 000</option>
+										</select>
+									</div>
+								</form>
+							</div>
+							<div id="dg-demo-filters" class="dg"></div>
+						</div>
+
+						<div class="col-sm-6">
+							<h3>Options used</h3>
+							<pre class="prettyprint">var dg3 = $( "#dg-demo-filters" ).datagrid({
     // same options as simple demo
 });
 
@@ -372,7 +390,12 @@ dg3.datagrid( "filters", $("#dg-demo-filters-area") );
 
 // you can also use .datagrid( "datagrid" ) method
 // dg3.datagrid( "datagrid" ).filters( $("#dg-demo-filters-area") );</pre>
-					
+							
+						</div>
+					</div>
+				</div>
+				
+				<div class="tab-pane" id="demo-events">
 				</div>
 			</div>
 

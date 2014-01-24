@@ -1,7 +1,7 @@
 jquery.datagrid
 ===============
 
-- Get data from any source (ajax, deferred function or plugin)
+- Fetch data from any source (ajax, deferred function or plugin)
 - Render a simple HTML Table easy to style (no imposed css)
 - Simple columns definition
 - Semi-automatic sorter and pager (you need to code server side)
