@@ -13,7 +13,7 @@ jquery.datagrid
 
 # Demo
 
-<a href="http://labs.creative-area.net/jquery.datagrid/demo/">View jquery.datagrid demo</a> *- soon (work on local)*
+<a href="http://labs.creative-area.net/jquery.datagrid/demo/">jquery.datagrid demo</a>
 
 
 # Configuration
