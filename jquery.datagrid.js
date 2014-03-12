@@ -9,12 +9,12 @@
 // the semi-colon before function invocation is a safety net against concatenated
 // scripts and/or other plugins which may not be closed properly.
 ;(function ( $, window, document, undefined ) {
-    
+
     // undefined is used here as the undefined global variable in ECMAScript 3 is
     // mutable (ie. it can be changed by someone else). undefined isn't really being
     // passed in so we can ensure the value of it is truly undefined. In ES5, undefined
     // can no longer be modified.
-    
+
     // window is passed through as local variable rather than global
     // as this (slightly) quickens the resolution process and can be more efficiently
     // minified (especially when both are regularly referenced in your plugin).
@@ -75,11 +75,11 @@
                 behavior = {};
                 behavior[ oldbehavior ] = {};
             }
-            
+
             if ( behavior[ "sliding" ] ) {
                 var pages = ( behavior[ "sliding" ][ "pages" ] ) ? behavior[ "sliding" ][ "pages" ] : 3;
                 return {
-                    minpage: Math.max( 1, Math.min( page - pages, lastpage - ( 2 * pages ) ) ), 
+                    minpage: Math.max( 1, Math.min( page - pages, lastpage - ( 2 * pages ) ) ),
                     maxpage: Math.min( lastpage, Math.max( page + pages, ( 2 * pages ) + 1 ) )
                 };
             }
@@ -158,18 +158,18 @@
                         datagrid.page( $(this).data( "page" ) );
                         datagrid.fetch();
                     });
-                    
+
                     // default limits (all pages)
                     var pagerLimits = {
-                        minpage: 1, 
+                        minpage: 1,
                         maxpage: lastpage
                     };
-                    
+
                     // behavior helper
                     if ( options.behavior ) {
                         pagerLimits = datagrid.tools.getPagerLimits( options.behavior, datagrid.page(), lastpage );
                     }
-                    
+
                     var pagerExtremes = function ( disabled, gopage, label ) {
                         var element;
                         if ( disabled ) {
@@ -226,7 +226,7 @@
         if ( $.type( this.settings.pagerPosition ) === "string" ) {
             this.settings.pagerPosition = [ this.settings.pagerPosition ];
         }
-        
+
         // extend columns settings with default definition
         for ( i=0 ; i<this.settings.col.length ; i++ ) {
             // this.settings.col[i] = $.extend( $.extend( {}, defaultsColumn ), this.settings.col[i] );
@@ -239,7 +239,7 @@
         this._params[ this.settings.paramsMapping.paging ] = 15; // 0 for no paging
         this._params[ this.settings.paramsMapping.orderby ] = "";
         this._params[ this.settings.paramsMapping.direction ] = "";
-        
+
         $.extend( this._params, this.settings.paramsDefault );
         // backup default params for reset
         this._paramsDefault = $.extend( {}, this._params, this.settings.paramsDefault );
@@ -248,7 +248,7 @@
 
         this._defaults = defaults;
         this._name = pluginName;
-        
+
         this.init();
     }
 
@@ -309,7 +309,7 @@
             if ( this.settings.onBefore !== false ) {
                 this.settings.onBefore.call( this );
             }
-            
+
             // extend default params with filters
             if ( filters ) {
                 $.extend( this._params, filters );
@@ -317,7 +317,7 @@
 
             // loading
             this.$el.find( "table" ).css( "opacity", 0.5 );
-            
+
             // get data by source
             this.getSource();
         },
@@ -364,24 +364,24 @@
             var self = this;
 
             total = ( result.total ) ? result.total : result.data.length;
-            
+
             // event : onData
             if ( $.type( this.settings.onData ) === "function" ) result = ( this.settings.onData( result ) || result );
-            
+
             // reset container
             if ( this.settings.resetContainer ) {
                 this.$el.html("");
             }
-            
+
             if ( result.data && result.data.length > 0 ) {
-                
+
                 table = $( "<table>" ).attr( this.settings.attr );
-                
+
                 var thead = $( "<thead>" ),
                     tbody = $( "<tbody>" ),
                     tr = $( "<tr>" ),
                     td;
-                
+
                 // table header
                 for ( i=0 ; i<this.settings.col.length ; i++ ) {
                     tr.append( function() {
@@ -389,27 +389,29 @@
                             "html": self.settings.col[i].title,
                             "data": { "field": self.settings.col[i].field }
                         }).attr(self.settings.col[ i ].attrHeader);
-                            
+
                         // sortable column
                         if ( self.settings.col[i].sortable ) {
                             th
                                 .data({
                                     "direction": self.settings.col[i].sortableDefaultAsc,
-                                    "colIndex": i 
+                                    "colIndex": i
                                 })
                                 .css( "cursor", "pointer" )
                                 .attr( self.settings.attrSortable )
                                 .addClass( pluginName + "-sortable" );
-                            
+
                             if ( self.orderby() == self.settings.col[i].field ) {
 
                                 var ascendant = !self.settings.col[i].sortableDefaultAsc;
-                                
+
+                                th.addClass(  pluginName + "-sortable-" + (ascendant ? 'asc' : 'desc') );
+
                                 // event : sorter
                                 self.getSorter( th, ascendant );
                             }
                         }
-                        
+
                         return th;
                     });
                 }
@@ -417,7 +419,7 @@
                 // sorter events
                 tr.on( "click", "." + pluginName + "-sortable", function(e) {
                     e.preventDefault();
-                    
+
                     var $this = $(this);
 
                     self.page( 1 );
@@ -425,54 +427,54 @@
                     self.direction( ( $this.data( "direction" ) ) ? "asc" : "desc" );
 
                     self.settings.col[ $this.data( "colIndex" ) ].sortableDefaultAsc = !self.settings.col[ $this.data( "colIndex" ) ].sortableDefaultAsc;
-                    
+
                     self.fetch();
                 });
 
                 table.append( thead.append( tr ) );
                 for ( var row = 0 ; row < result.data.length ; row++ ) {
                     tr = $( "<tr>" );
-                    
+
                     // event : onRowData
                     if ( $.type( this.settings.onRowData ) === "function" ) result.data[ row ] = ( this.settings.onRowData( result.data[ row ], row, tr ) || result.data[ row ] );
-                    
+
                     for ( i = 0 ; i < this.settings.col.length ; i++ ) {
                         var td = $( "<td>" ).attr( this.settings.col[ i ].attr );
-                        
+
                         // cell render
-                        tr.append( 
-                            td.append( this.getCell( result, i, row, td ) ) 
+                        tr.append(
+                            td.append( this.getCell( result, i, row, td ) )
                         );
                     }
-                    
+
                     tbody.append( tr );
                 }
                 table.append( tbody );
-                
+
                 // pager
                 if ( $.inArray( "top", this.settings.pagerPosition ) >= 0 ) {
                     this.$el.append( this.getPager( this._params[ this.settings.paramsMapping.page ], Math.ceil( total / this._params[ this.settings.paramsMapping.paging ] ) ) );
                 }
-                
+
                 this.$el.append( table );
-                
+
                 // pager
                 if ( $.inArray( "bottom", this.settings.pagerPosition ) >= 0 ) {
                     this.$el.append( this.getPager( this._params[ this.settings.paramsMapping.page ], Math.ceil( total / this._params[ this.settings.paramsMapping.paging ] ) ) );
                 }
-                
+
             } else {
-                
+
                 // no data
                 this.getNoData();
-                
+
             }
-            
+
             // onComplete
             if ( this.settings.onComplete !== false ) {
                 this.settings.onComplete.call( this );
             }
-            
+
         },
 
         getSorter: function( th, ascendant ) {
@@ -513,9 +515,9 @@
 
         getCell: function( result, i, row, td ) {
             return ( this.cell[ $.type( this.settings.col[ i ].render ) ] || function() { return "" } )( this, i, td, {
-                value: result.data[ row ][ this.settings.col[ i ].field ], 
+                value: result.data[ row ][ this.settings.col[ i ].field ],
                 field: this.settings.col[ i ].field,
-                row: result.data[ row ], 
+                row: result.data[ row ],
                 colindex: i
             });
         },
@@ -609,7 +611,7 @@
                     case "INPUT":
                         self.addElementFilter( $selector, "change" );
                     break;
-                    
+
                     default:
                         // loop to find form elements
                         $selector.find( "[name]" ).each( function() {
@@ -621,14 +623,14 @@
                 }
             });
         },
-        
+
         // add filter on input, select, textarea
         addElementFilter: function( $element, eventName, selector ) {
             var self = this;
 
             // no auto add if data datagrid-filter = "disable"
             if ( $element.data("datagrid-filter") == "disable" ) return false;
-            
+
             $element.on( eventName, function() {
                 switch ( $element[0].type ) {
                     case "checkbox":
@@ -642,7 +644,7 @@
                             self._params[ $element[0].name ] = ( $element[0].checked ) ? $element.val() : '';
                         }
                     break;
-                    
+
                     default:
                         self._params[ $element[0].name ] = $element.val();
                     break;
