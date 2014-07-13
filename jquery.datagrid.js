@@ -103,7 +103,7 @@
                     var options = {
                         up: " ↑",
                         down: " ↓"
-                    }
+                    };
                     if ( sorterOptions ) {
                         $.extend( options, sorterOptions );
                     }
@@ -183,10 +183,10 @@
                         if ( element ) {
                             element.append(
                                 $("<a>").html( label )
-                            )
+                            );
                             container.append( element );
                         }
-                    }
+                    };
                     if ( options.firstPage ) {
                         pagerExtremes( ( page == 1 ), 1, options.firstPage );
                     }
@@ -265,7 +265,7 @@
 
         // reset params
         reset: function() {
-            return this._params = $.extend( {}, this._paramsDefault );;
+            this._params = $.extend( {}, this._paramsDefault );
         },
 
         // get / set page
@@ -355,7 +355,7 @@
         // render html table
         renderTable: function( result ) {
 
-            if ( result == undefined ) {
+            if ( result === undefined ) {
                 return;
             }
 
@@ -439,7 +439,7 @@
                     if ( $.type( this.settings.onRowData ) === "function" ) result.data[ row ] = ( this.settings.onRowData( result.data[ row ], row, tr ) || result.data[ row ] );
 
                     for ( i = 0 ; i < this.settings.col.length ; i++ ) {
-                        var td = $( "<td>" ).attr( this.settings.col[ i ].attr );
+                        td = $( "<td>" ).attr( this.settings.col[ i ].attr );
 
                         // cell render
                         tr.append(
@@ -514,7 +514,7 @@
         },
 
         getCell: function( result, i, row, td ) {
-            return ( this.cell[ $.type( this.settings.col[ i ].render ) ] || function() { return "" } )( this, i, td, {
+            return ( this.cell[ $.type( this.settings.col[ i ].render ) ] || function() { return ""; } )( this, i, td, {
                 value: result.data[ row ][ this.settings.col[ i ].field ],
                 field: this.settings.col[ i ].field,
                 row: result.data[ row ],
@@ -588,7 +588,7 @@
         },
 
         getNoData: function() {
-            return ( this.noData[ $.type( this.settings.noData ) ] || function() { this.element.html("") } )( this );
+            return ( this.noData[ $.type( this.settings.noData ) ] || function() { this.element.html(""); } )( this );
         },
         noData: {
             "string": function( self ) {
@@ -658,7 +658,7 @@
         _onError: function( err, value ) {
             console.error( "[jquery.datagrid error] " + err + ": " + value + "" );
         }
-    }
+    };
 
     // You don't need to change something below:
     // A really lightweight plugin wrapper around the constructor,
@@ -721,7 +721,7 @@
                             _args.push( args[4] );
                         }
                         return renderers[ pluginType ][ args[3] ].apply( this, _args );
-                    }
+                    };
                     return this;
                 }
             }
