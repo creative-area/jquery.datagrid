@@ -1,7 +1,7 @@
 jquery.datagrid
 ===============
 
-*- draft version (0.1 soon)*
+*- version 0.1*
 
 - Fetch data from any source (ajax, deferred function or plugin)
 - Render a simple HTML Table easy to style (no imposed css)
