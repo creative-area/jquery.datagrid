@@ -380,6 +380,7 @@ All form elements (input, select, taxtarea) contents in the `$element` win a `ch
 
 The changed element value is added to the sent params (key is the html element name).
 
+You can disable an element by adding a `"data-datagrid-filter"="disable"` attribute.
 
 
 # Plugins
