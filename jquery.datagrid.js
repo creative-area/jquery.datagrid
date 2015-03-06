@@ -84,6 +84,19 @@
                     maxpage: Math.min( lastpage, Math.max( page + pages, ( 2 * pages ) + 1 ) )
                 };
             }
+        },
+        sortByKey: function( array, key, comparator ) {
+            return array.sort(function(a, b) {
+                var x = a[key];
+                var y = b[key];
+                if ( 1*x - x === 0 ) {
+                    x = 1*x;
+                }
+                if ( 1*y - y === 0 ) {
+                    y = 1*y;
+                }
+                return ((x < y) ? -comparator : ((x > y) ? comparator : 0));
+            });
         }
     };
 
@@ -99,15 +112,31 @@
                 },
                 "data": function( sourceOptions ) {
                     var datagrid = this;
-                    var page = datagrid._params[ datagrid.settings.paramsMapping.page ];
-                    var paging = datagrid._params[ datagrid.settings.paramsMapping.paging ];
-                    var data = [];
-                    if ( sourceOptions && sourceOptions.data ) {
-                        datagrid.settings.data = sourceOptions.data;
-                    }
-                    if ( datagrid.settings.data ) {
-                        data = datagrid.settings.data.slice( (page-1)*paging, page*paging );
-                        datagrid.render( { total: datagrid.settings.data.length, data: data } );
+                    var params = datagrid.params();
+                    var page = params[ datagrid.settings.paramsMapping.page ];
+                    var paging = params[ datagrid.settings.paramsMapping.paging ];
+                    var orderby = params[ datagrid.settings.paramsMapping.orderby ];
+                    var direction = params[ datagrid.settings.paramsMapping.direction ];
+                    var options = {
+                        sorter: tools.sortByKey,
+                        filter: false,
+                        data: datagrid.settings.data
+                    };
+                    $.extend( options, sourceOptions );
+                    var filters = $.extend( {}, params );
+                    delete filters[ datagrid.settings.paramsMapping.page ];
+                    delete filters[ datagrid.settings.paramsMapping.paging ];
+                    delete filters[ datagrid.settings.paramsMapping.orderby ];
+                    delete filters[ datagrid.settings.paramsMapping.direction ];
+                    if ( options.data ) {
+                        if ( orderby !== "" ) {
+                            options.data = options.sorter( options.data, orderby, ( direction === "desc" ) ? -1 : 1 );
+                        }
+                        if ( options.filter !== false ) {
+                            options.data = options.filter( options.data, filters );
+                        }
+                        pagedata = options.data.slice( (page-1)*paging, page*paging );
+                        datagrid.render( { total: options.data.length, data: pagedata } );
                     }
                 }
             },
@@ -245,8 +274,9 @@
         this._params[ this.settings.paramsMapping.paging ] = 15; // 0 for no paging
         this._params[ this.settings.paramsMapping.orderby ] = "";
         this._params[ this.settings.paramsMapping.direction ] = "";
-
+        
         $.extend( this._params, this.settings.paramsDefault );
+
         // backup default params for reset
         this._paramsDefault = $.extend( {}, this._params, this.settings.paramsDefault );
 
@@ -257,6 +287,11 @@
 
         // cache auto filtered elements (needed to remove filters events)
         this._filters = [];
+
+        // static data
+        if ( this.settings.data !== false ) {
+            this.settings.source = "data";
+        }
 
         this.init();
     }
