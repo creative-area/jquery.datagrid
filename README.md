@@ -587,22 +587,4 @@ $.fn.datagrid( "plugin", "pager", "scratch-pager", function( page, lastpage, pag
 });
 ```
 
-You need to handle `click` events on page items.
-
-```javascript
-// example: pager events
-$.fn.datagrid( "plugin", "pager", "scratch-pager", function( page, lastpage, pagerOptions ) {
-    // your pager logic, based on "page" (current page) and "lastpage"
-    var datagrid = this;
-    var $pager = $( "<div>" );
-    ...
-    // add a "page" class and "data-page" number on page items
-    $pager.on( "click", ".page", function(e) {
-        e.preventDefault();
-        datagrid.page( $(this).data( "page" ) );
-        datagrid.fetch();
-    });
-    // you must return pager
-    return $pager;
-});
-```
+You don't need to handle `click` events on page items: they are automatically attached on elements with `datagrid-page` class. You just need to set target page with `data-page` attribute.

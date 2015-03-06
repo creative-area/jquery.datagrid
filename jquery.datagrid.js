@@ -1,7 +1,7 @@
 /*
  *  Project: jquery.datagrid
  *  Description: datagrid
- *  Version: draft
+ *  Version: 0.1
  *  Author: Creative Area www.creative-area.net
  *  License: Dual licensed under the MIT or GPL Version 2 licenses.
  */
@@ -152,13 +152,6 @@
                         container = ul;
                     }
 
-                    // pager events
-                    container.on( "click", "." + pluginName + "-page", function(e) {
-                        e.preventDefault();
-                        datagrid.page( $(this).data( "page" ) );
-                        datagrid.fetch();
-                    });
-
                     // default limits (all pages)
                     var pagerLimits = {
                         minpage: 1,
@@ -229,7 +222,6 @@
 
         // extend columns settings with default definition
         for ( i=0 ; i<this.settings.col.length ; i++ ) {
-            // this.settings.col[i] = $.extend( $.extend( {}, defaultsColumn ), this.settings.col[i] );
             this.settings.col[i] = $.extend( {}, defaultsColumn, this.settings.col[i] );
         }
 
@@ -249,13 +241,38 @@
         this._defaults = defaults;
         this._name = pluginName;
 
+        // cache auto filtered elements (needed to remove filters events)
+        this._filters = [];
+
         this.init();
     }
 
     Plugin.prototype = {
         init: function () {
+            var datagrid = this;
+
+            // sorter events
+            this.$el.on( "click", "." + pluginName + "-sortable", function(e) {
+                e.preventDefault();
+                var $this = $(this);
+                datagrid.page( 1 );
+                datagrid.orderby( $this.data( "field" ) );
+                datagrid.direction( ( $this.data( "direction" ) ) ? "asc" : "desc" );
+                datagrid.settings.col[ $this.data( "colIndex" ) ].sortableDefaultAsc = !datagrid.settings.col[ $this.data( "colIndex" ) ].sortableDefaultAsc;
+                datagrid.fetch();
+            });
+
+            // pager events
+            this.$el.on( "click", "." + pluginName + "-page", function(e) {
+                e.preventDefault();
+                datagrid.page( $(this).data( "page" ) );
+                datagrid.fetch();
+            });
+
             // if autoload, get data
-            if ( this.settings["autoload"] ) this.fetch();
+            if ( this.settings.autoload ) {
+                this.fetch();
+            }
         },
 
         // get params
@@ -416,21 +433,6 @@
                     });
                 }
 
-                // sorter events
-                tr.on( "click", "." + pluginName + "-sortable", function(e) {
-                    e.preventDefault();
-
-                    var $this = $(this);
-
-                    self.page( 1 );
-                    self.orderby( $this.data( "field" ) );
-                    self.direction( ( $this.data( "direction" ) ) ? "asc" : "desc" );
-
-                    self.settings.col[ $this.data( "colIndex" ) ].sortableDefaultAsc = !self.settings.col[ $this.data( "colIndex" ) ].sortableDefaultAsc;
-
-                    self.fetch();
-                });
-
                 table.append( thead.append( tr ) );
                 for ( var row = 0 ; row < result.data.length ; row++ ) {
                     tr = $( "<tr>" );
@@ -453,14 +455,14 @@
 
                 // pager
                 if ( $.inArray( "top", this.settings.pagerPosition ) >= 0 ) {
-                    this.$el.append( this.getPager( this._params[ this.settings.paramsMapping.page ], Math.ceil( total / this._params[ this.settings.paramsMapping.paging ] ) ) );
+                    this.renderPager( total );
                 }
 
                 this.$el.append( table );
 
                 // pager
                 if ( $.inArray( "bottom", this.settings.pagerPosition ) >= 0 ) {
-                    this.$el.append( this.getPager( this._params[ this.settings.paramsMapping.page ], Math.ceil( total / this._params[ this.settings.paramsMapping.paging ] ) ) );
+                    this.renderPager( total );
                 }
 
             } else {
@@ -475,6 +477,10 @@
                 this.settings.onComplete.call( this );
             }
 
+        },
+
+        renderPager: function( total ) {
+            this.$el.append( this.getPager( this._params[ this.settings.paramsMapping.page ], Math.ceil( total / this._params[ this.settings.paramsMapping.paging ] ) ) );
         },
 
         getSorter: function( th, ascendant ) {
@@ -652,6 +658,8 @@
                 self.page( 1 );
                 self.fetch();
             });
+
+            this._filters.push([$element, eventName]);
         },
 
         // error
@@ -745,7 +753,17 @@
 
                 // Allow instances to be destroyed via the 'destroy' method
                 if (options === "destroy") {
+                    // remove events
+                    instance.$el.off( "click", "." + pluginName + "-sortable");
+                    instance.$el.off( "click", "." + pluginName + "-page");
+                    for ( var i=0 ; i<instance._filters.length ; i++ ) {
+                        instance._filters[i][0].off(instance._filters[i][1]);
+                    }
+                    // remove plugin
+                    instance.$el.children().remove();
+                    // delete plugin instance saved on element data
                     $.data(this, "plugin_" + pluginName, null);
+                    instance = null;
                 }
             });
 
