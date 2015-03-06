@@ -376,7 +376,7 @@ $( selector ).datagrid( "filters", $element );
 $( selector ).datagrid( "datagrid").filters( $element );
 ```
 
-All form elements (input, select, taxtarea) contents in the `$element` win a `change` event that automatically call `datagrid.fetch()`.
+All form elements (input, select, textarea) contents in the `$element` win a `change` event that automatically call `datagrid.fetch()`.
 
 The changed element value is added to the sent params (key is the html element name).
 
