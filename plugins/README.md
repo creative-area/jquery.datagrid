@@ -2,7 +2,7 @@ jquery.datagrid - plugins
 =========================
 
 
-## `jquery.datagrid.bootstrap3.js`
+## jquery.datagrid.bootstrap3.js
 
 
 Use it with Bootstrap 3.
@@ -81,9 +81,9 @@ options = {
 
 Extend `"bootstrap-button"` with `options = { "icons": "fa" }`
 
+----
 
-
-## `jquery.datagrid.bootstrap.js`
+## jquery.datagrid.bootstrap.js
 
 
 Use it with Bootstrap 2.
