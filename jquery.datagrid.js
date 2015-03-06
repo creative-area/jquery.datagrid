@@ -26,6 +26,7 @@
     var defaults = {
             source: "default", // plugin
             url: "",
+            data: false,
             autoload: true,
             paramsDefault: {},
             paramsMapping: {
@@ -91,10 +92,23 @@
             sourceArgs: 0,
             source: {
                 "default": function( sourceOptions ) {
-                    var self = this;
-                    $.post( self.settings.url, self.params(), function( result ) {
-                        self.render( result );
+                    var datagrid = this;
+                    $.post( datagrid.settings.url, datagrid.params(), function( result ) {
+                        datagrid.render( result );
                     } );
+                },
+                "data": function( sourceOptions ) {
+                    var datagrid = this;
+                    var page = datagrid._params[ datagrid.settings.paramsMapping.page ];
+                    var paging = datagrid._params[ datagrid.settings.paramsMapping.paging ];
+                    var data = [];
+                    if ( sourceOptions && sourceOptions.data ) {
+                        datagrid.settings.data = sourceOptions.data;
+                    }
+                    if ( datagrid.settings.data ) {
+                        data = datagrid.settings.data.slice( (page-1)*paging, page*paging );
+                        datagrid.render( { total: datagrid.settings.data.length, data: data } );
+                    }
                 }
             },
             sorterArgs: 1,

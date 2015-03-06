@@ -14,9 +14,36 @@
 	
 	<script type="text/javascript" src="../jquery.datagrid.js"></script>
 	<script type="text/javascript" src="../plugins/jquery.datagrid.bootstrap3.js"></script>
+	<script type="text/javascript" src="countries.js"></script>
 
 	<script type="text/javascript">
 	$( document ).ready( function() {
+		// simple
+		var dgs = $( "#dg-demo-static-data" ).datagrid({
+			source: "data",
+			data: countries,
+			col: [{
+				field: "Continent",
+				title: "Continent",
+				sortable: true
+			},{
+				field: "Name",
+				title: "Name",
+				sortable: true
+			},{
+				field: "Population",
+				title: "Population",
+				sortable: true
+			},{
+				field: "SurfaceArea",
+				title: "Surface",
+				sortable: true
+			}],
+			attr: { "class": "table table-bordered table-condensed" },
+			sorter: "bootstrap",
+			pager: "bootstrap",
+			paramsDefault: {paging:20}
+		});
 
 		// simple
 		var dg1 = $( "#dg-demo-simple" ).datagrid({
@@ -226,6 +253,7 @@
 			
 			<!-- Nav tabs -->
 			<ul class="nav nav-pills" id="demo-tabs">
+				<li><a href="#demo-static-data" data-toggle="tab" data-dg="static-data">Static data</a></li>
 				<li><a href="#demo-simple" data-toggle="tab" data-dg="simple">Simple</a></li>
 				<li><a href="#demo-cell" data-toggle="tab" data-dg="cell">Cell rendering</a></li>
 				<li><a href="#demo-filters" data-toggle="tab" data-dg="filters">Filters</a></li>
@@ -234,7 +262,56 @@
 
 			<!-- Tab panes -->
 			<div class="tab-content">
-				<div class="tab-pane active" id="demo-simple">
+				<div class="tab-pane active" id="demo-static-data">
+					<div class="row">
+						
+						<div class="col-sm-6">
+							<h3>Simple</h3>
+							<div id="dg-demo-static-data" class="dg"></div>
+						</div>
+
+						<div class="col-sm-6">
+							<h3>Options used</h3>
+							<pre class="prettyprint">{
+    // static data
+    source: "data",
+    data: countries, // see `countries.js` file
+
+    // columns definition 
+    // title, field name and sortable
+    col: [{
+        field: "Continent",
+        title: "Continent",
+        sortable: true
+    },{
+        field: "Name",
+        title: "Name",
+        sortable: true
+    },{
+        field: "Population",
+        title: "Population",
+        sortable: true
+    },{
+        field: "SurfaceArea",
+        title: "Surface",
+        sortable: true
+    }],
+
+    // table attributes set by $.attr()
+    attr: { 
+        "class": "table table-bordered table-condensed"
+    },
+    // plugin used to display sort icon 
+    sorter: "bootstrap",
+    // plugin used to display pagination
+    pager: "bootstrap"
+}</pre>
+							
+						</div>
+					</div>
+				</div>
+
+				<div class="tab-pane" id="demo-simple">
 					<div class="row">
 						
 						<div class="col-sm-6">
