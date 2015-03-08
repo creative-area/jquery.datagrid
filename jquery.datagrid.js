@@ -85,45 +85,51 @@
                 };
             }
         },
-        // sort array of objects by key
-        sortByKey: function( data, key, comparator ) {
-            return data.sort(function(a, b) {
-                var x = a[key];
-                var y = b[key];
-                if ( 1*x - x === 0 ) {
-                    x = 1*x;
-                }
-                if ( 1*y - y === 0 ) {
-                    y = 1*y;
-                }
-                return ((x < y) ? -comparator : ((x > y) ? comparator : 0));
-            });
-        },
-        // filter data
-        filter: function( data, filters ) {
-            var filteredData = [];
-            for ( var i=0 ; i<data.length ; i++ ) {
-                var good = true;
-                for ( var filter in filters ) {
-                    if ( "" + filters[ filter ] !== "" ) {
-                        good = good && ( "" + data[ i ][ filter ] === "" + filters[ filter ] );
+        data: {
+            // sort array of objects by key
+            sorter: function( data, key, comparator ) {
+                return data.sort(function(a, b) {
+                    var x = a[key];
+                    var y = b[key];
+                    if ( 1*x - x === 0 ) {
+                        x = 1*x;
+                    }
+                    if ( 1*y - y === 0 ) {
+                        y = 1*y;
+                    }
+                    return ((x < y) ? -comparator : ((x > y) ? comparator : 0));
+                });
+            },
+            // filter data
+            filter: function( data, filters ) {
+                var filteredData = [];
+                for ( var i=0 ; i<data.length ; i++ ) {
+                    var good = true;
+                    for ( var filter in filters ) {
+                        if ( "" + filters[ filter ] !== "" ) {
+                            good = good && ( "" + data[ i ][ filter ] === "" + filters[ filter ] );
+                        }
+                    }
+                    if ( good ) {
+                        filteredData.push( data[ i ] );
                     }
                 }
-                if ( good ) {
-                    filteredData.push( data[ i ] );
-                }
+                return filteredData;
             }
-            return filteredData;
         }
     };
 
     // Plugins
-    var renderers = {
+    var plugins = {
             sourceArgs: 0,
             source: {
                 "default": function( sourceOptions ) {
                     var datagrid = this;
-                    $.post( datagrid.settings.url, datagrid.params(), function( result ) {
+                    var options = {
+                        url: datagrid.settings.url
+                    };
+                    $.extend( options, sourceOptions );
+                    $.post( options.url, datagrid.params(), function( result ) {
                         datagrid.render( result );
                     } );
                 },
@@ -135,8 +141,8 @@
                     var orderby = params[ datagrid.settings.paramsMapping.orderby ];
                     var direction = params[ datagrid.settings.paramsMapping.direction ];
                     var options = {
-                        sorter: tools.sortByKey,
-                        filter: tools.filter,
+                        sorter: tools.data.sorter,
+                        filter: tools.data.filter,
                         data: datagrid.settings.data
                     };
                     $.extend( options, sourceOptions );
@@ -269,6 +275,9 @@
             }
         };
 
+    // post alias
+    plugins.source.post = plugins.source.default;
+
     // The actual plugin constructor
     function Plugin( element, options ) {
         this.element = element;
@@ -306,7 +315,7 @@
         this._filters = [];
 
         // static data
-        if ( this.settings.data !== false ) {
+        if ( this.settings.data !== false && !this.settings.source.data ) {
             this.settings.source = "data";
         }
 
@@ -420,11 +429,27 @@
                 );
             },
             "string": function( self ) {
-                if ( renderers.source[ self.settings.source ] ) {
-                    renderers.source[ self.settings.source ].call( self );
+                if ( plugins.source[ self.settings.source ] ) {
+                    plugins.source[ self.settings.source ].call( self );
                 } else {
                     // no plugin found
                     self._onError( "Unknown source", self.settings.source );
+                    return false;
+                }
+            },
+            "object": function( self ) {
+                // plugin
+                var isLoaded = false;
+                for ( var p in self.settings.source ) {
+                    if ( plugins.source[ p ] ) {
+                        isLoaded = true;
+                        plugins.source[ p ].call( self, self.settings.source[ p ] );
+                        return true;
+                    }
+                }
+                if ( !isLoaded ) {
+                    // no plugin found
+                    self._onError( "Unknown sorter", JSON.stringify( self.settings.source ) );
                     return false;
                 }
             }
@@ -557,9 +582,9 @@
                 this.settings.sorter.call( th, ascendant );
             },
             "string": function( self, th, ascendant ) {
-                if ( renderers.sorter[ self.settings.sorter ] ) {
+                if ( plugins.sorter[ self.settings.sorter ] ) {
                     // plugin
-                    renderers.sorter[ self.settings.sorter ].call( th, ascendant );
+                    plugins.sorter[ self.settings.sorter ].call( th, ascendant );
                     return true;
                 } else {
                     // no plugin found
@@ -571,9 +596,9 @@
                 // plugin
                 var isLoaded = false;
                 for ( var p in self.settings.sorter ) {
-                    if ( renderers.sorter[ p ] ) {
+                    if ( plugins.sorter[ p ] ) {
                         isLoaded = true;
-                        renderers.sorter[ p ].call( th, ascendant, self.settings.sorter[ p ] );
+                        plugins.sorter[ p ].call( th, ascendant, self.settings.sorter[ p ] );
                         return true;
                     }
                 }
@@ -599,9 +624,9 @@
                 return self.settings.col[ i ].render.call( td, renderParams );
             },
             "string": function( self, i, td, renderParams ) {
-                if ( renderers.cell[ self.settings.col[ i ].render ] ) {
+                if ( plugins.cell[ self.settings.col[ i ].render ] ) {
                     // plugin
-                    return renderers.cell[ self.settings.col[ i ].render ].call( td, renderParams );
+                    return plugins.cell[ self.settings.col[ i ].render ].call( td, renderParams );
                 } else {
                     // no plugin found
                     self._onError( "Unknown cell render", self.settings.col[ i ].render );
@@ -612,9 +637,9 @@
                 // plugin
                 var isLoaded = false;
                 for ( var p in self.settings.col[ i ].render ) {
-                    if ( renderers.cell[ p ] ) {
+                    if ( plugins.cell[ p ] ) {
                         isLoaded = true;
-                        return renderers.cell[ p ].call( td, renderParams, self.settings.col[ i ].render[ p ] );
+                        return plugins.cell[ p ].call( td, renderParams, self.settings.col[ i ].render[ p ] );
                     }
                 }
                 if ( !isLoaded ) {
@@ -630,9 +655,9 @@
         },
         pager: {
             "string": function( self, page, lastpage ) {
-                if ( renderers.pager[ self.settings.pager ] ) {
+                if ( plugins.pager[ self.settings.pager ] ) {
                     // plugin
-                    return renderers.pager[ self.settings.pager ].call( self, page, lastpage );
+                    return plugins.pager[ self.settings.pager ].call( self, page, lastpage );
                 } else {
                     // no plugin found
                     self._onError( "Unknown pager", self.settings.pager );
@@ -646,9 +671,9 @@
                 // plugin
                 var isLoaded = false;
                 for ( var p in self.settings.pager ) {
-                    if ( renderers.pager[ p ] ) {
+                    if ( plugins.pager[ p ] ) {
                         isLoaded = true;
-                        return renderers.pager[ p ].call( self, page, lastpage, self.settings.pager[ p ] );
+                        return plugins.pager[ p ].call( self, page, lastpage, self.settings.pager[ p ] );
                     }
                 }
                 if ( !isLoaded ) {
@@ -775,26 +800,26 @@
                 // Add Plugins
                 // $.fn.datagrid( "plugin", "source|sorter|pager|cell", "pluginName", function );
                 if ( args.length === 4 && typeof args[1] === "string" && typeof args[2] === "string" && typeof args[3] === "function" ) {
-                    // renderers[ type ][ name ] = callback;
-                    renderers[ args[1] ][ args[2] ] = args[3];
+                    // plugins[ type ][ name ] = callback;
+                    plugins[ args[1] ][ args[2] ] = args[3];
                     return this;
                 }
                 // Extend Plugins
                 // $.fn.datagrid( "plugin", "source|sorter|pager|cell", "pluginName", "extendedPluginName", extendedOptions );
                 if ( args.length === 5 && typeof args[1] === "string" && typeof args[2] === "string" && typeof args[3] === "string" ) {
-                    // renderers[ type ][ name ] = callback;
+                    // plugins[ type ][ name ] = callback;
                     var pluginType = args[1];
-                    renderers[ pluginType ][ args[2] ] = function() {
+                    plugins[ pluginType ][ args[2] ] = function() {
                         var _args = [];
                         for ( var i=0 ; i < arguments.length ; i++ ) {
                             _args.push(arguments[i]);
                         }
-                        if ( _args.length > renderers[ pluginType + "Args" ] ) {
+                        if ( _args.length > plugins[ pluginType + "Args" ] ) {
                             _args[ _args.length - 1 ] = $.extend( args[4], _args[ _args.length - 1 ] );
                         } else {
                             _args.push( args[4] );
                         }
-                        return renderers[ pluginType ][ args[3] ].apply( this, _args );
+                        return plugins[ pluginType ][ args[3] ].apply( this, _args );
                     };
                     return this;
                 }

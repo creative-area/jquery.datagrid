@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 	<meta charset="utf-8">
-	<title>jQuery Datagrid - Demo</title>
+	<title>jQuery Datagrid - Tests</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="jQuery Datagrid">
 	<meta name="author" content="Creative Area">
@@ -12,13 +12,52 @@
 	
 	<script type="text/javascript" src="../jquery.datagrid.js"></script>
 	<script type="text/javascript" src="../plugins/jquery.datagrid.bootstrap3.js"></script>
+	<script type="text/javascript" src="countries.js"></script>
 
 	<script type="text/javascript">
 	$( document ).ready( function() {
 
 		// tests
 		$( "#dg-test" ).datagrid({
-			url: "data/demo-simple.php",
+			// data: countries,
+			source: {
+				data: {
+					data: countries,
+					filter: function( data, filters ) {
+						// console.log( filters );
+						var filteredData = [];
+						for ( var i=0 ; i<data.length ; i++ ) {
+							var good = true;
+							if ( filters.Continent && filters.Continent !== "" ) {
+								good = good && ( "" + data[ i ].Continent === "" + filters.Continent );
+							}
+							if ( filters.PopulationInterval && filters.PopulationInterval !== "" ) {
+								if ( filters.PopulationInterval === "1" && 1*data[ i ].Population > 1000000 ) {
+									good = false;
+								} else if ( filters.PopulationInterval === "2" && ( 1*data[ i ].Population <= 1000000 || 1*data[ i ].Population >= 100000000 ) ) {
+									good = false;
+								} else if ( filters.PopulationInterval === "3" && 1*data[ i ].Population < 100000000 ) {
+									good = false;
+								}
+							}
+							if ( good ) {
+								filteredData.push( data[ i ] );
+							}
+						}
+						return filteredData;
+					}
+					// ,
+					// sorter: function( data, key, comparator ) {
+					// 	return data;
+					// }
+				}
+			},
+			// url: "data/demo-simple.php",
+			// source: {
+			// 	"post": {
+			// 		url: "data/demo-simple.php"
+			// 	}
+			// },
 			col: [{
 				field: "Continent",
 				title: "Continent",
@@ -95,7 +134,7 @@
 								</select>
 							</div>
 							<div class="form-group" style="width:120px;">
-								<label class="sr-only" for="PopulationDemoFilters">Continent</label>
+								<label class="sr-only" for="PopulationDemoFilters">Population</label>
 								<select name="PopulationInterval" id="PopulationDemoFilters" class="form-control">
 									<option value="">Populations - all</option>
 									<option value="1">Inf 1 million</option>
@@ -103,7 +142,7 @@
 									<option value="3">Sup 100 millions</option>
 								</select>
 							</div>
-							<div class="form-group" style="width:210px;">
+							<div class="form-group" style="width:210px; display: none;">
 								<label class="sr-only" for="SurfaceAreaDemoFilters">Surface</label>
 								<select name="SurfaceArea" id="SurfaceAreaDemoFilters" class="form-control" multiple="multiple" size="4">
 									<option value="" disabled>Surfaces</option>

@@ -1,15 +1,15 @@
 jquery.datagrid
 ===============
 
-*- version 0.1*
+*- version 0.2*
 
-- Fetch data from any source (ajax, deferred function or plugin)
+- Fetch data from any source: static data, ajax, deferred function or plugin
 - Render a simple HTML Table easy to style (no imposed css)
 - Simple columns definition
-- Semi-automatic sorter and pager (you need to code server side)
+- Semi-automatic sorter and pager (for remote data, you need to code server side)
 - Plugins for cell, pager and sorter renderers (easy to create, very easy to extend)
 - Events on each step (you do what you want with your data)
-- Convert form elements (input, select) into automatic filters
+- Convert form elements (input, select) into automatic filters (magic!)
 
 # Demo
 
@@ -20,7 +20,7 @@ jquery.datagrid
 
 Just load `jquery.datagrid.js` (and optional plugin scripts if you want to use them)
 
-A simple example
+A simple example with **remote data** (fetch by ajax post)
 
 ```html
 <script type="text/javascript" src="jquery.datagrid.js"></script>
@@ -44,6 +44,36 @@ $( document ).ready( function() {
 </script>
 ```
 
+Another simple example with **static data**
+
+```html
+<script type="text/javascript" src="jquery.datagrid.js"></script>
+<script type="text/javascript">
+$( document ).ready( function() {
+    var datagrid = $(container).datagrid({
+        data: [{
+            firstname: "Bob",
+            lastname: "Dylan"
+        },{
+            firstname: "Jimi",
+            lastname: "Hendrix"
+        }],
+        col: [{
+            field: "firstname",
+            title: "Firstname"
+        },{
+            field: "lastname",
+            title: "Lastname",
+            sortable: true,
+            render: function( data ) {
+                return "<strong>" + data.value + "<strong>";
+            }
+        }]
+    })
+}); 
+</script>
+```
+
 ## Options
 
 ```javascript
@@ -51,6 +81,7 @@ $( document ).ready( function() {
 {
     source: "default", // plugin
     url: "",
+    data: false,
     autoload: true,
     paramsDefault: {},
     paramsMapping: {
@@ -86,8 +117,9 @@ List of `option names` ( *expected values* )
 
 #### Get data
 
-- `source` ( *string* || *function* ) : data fetching method: function or plugin name (string).
-- `url`  ( *string* ) : server url where data are fetch (with POST params data).
+- `source` ( *string* || *object* || *function* ) : data fetching method: function, plugin name (string) or plugin name with config (object). - *see __Source Plugins__ below*
+- `url`  ( *string* ) : server url where data are fetch (with POST params data). Used by `default` source.
+- `data` ( *false* || *array* ) : static data (no remote fetch). If not `false`, `source` will be automatically set to `"data"`.
 - `autoload` ( *boolean* ) : auto load data. If set to `false`, you need to load manualy the data with `datagrid.fetch()` method.
 - `paramsDefault` ( *object* ) : default params added to the data request.
 - `paramsMapping` ( *object* ) : you can map param names used for paging and sorting (keys used: see default value).
@@ -190,7 +222,7 @@ Fetching data do not reset previous params (usefull with auto filters). You can 
 
 How data is fetched depends on `source` option type:
 
-#### string
+#### string or object
 
 Plugin will be used (if it exists).
 
@@ -444,7 +476,39 @@ In the callback, `this` is the instance of the datagrid plugin. So you can get d
 
 To display the HTML table, you need to call datagrid `render( data )` method.
 
-`"default"` plugin call `$.post()` to `url` datagrid option and has no options.
+
+#### Source plugin "default" (alias "post")
+
+`"default"` plugin (alias `"post"`) call `$.post()` to get data. The only option is `url`. If not set, it use datagrid `url` option.
+
+
+#### Source plugin "data"
+
+`"data"` plugin is used for static data. You can change sorter and filter functions by your own with `sorter` and `filter` options. If `data` option is filled, it will be used instead of datagrid `data` option.
+
+```javascript
+$( selector ).datagrid({
+    source: {
+        data: {
+            sorter: function( data, key, comparator ) {
+                // `data`: all the data
+                // `key`: sorted fieldname
+                // `comparator`:  `1` (asc) or `-1` (desc)
+                return sortedData;
+            },
+            filter: function( data, filters ) {
+                // `data`: all the data
+                // `filters`: object of attribute-value pairs
+                return filteredData;
+            },
+            data: [] // static array of object (attribute-value pairs)
+        }
+    }
+});
+```
+
+
+#### Source plugin: create custom
 
 ```javascript
 // example: "get" instead of "post" ajax
@@ -467,7 +531,13 @@ $.fn.datagrid( "plugin", "source", "get", function( sourceOptions ) {
 
 `cell` plugin is used to render `<td>` content.
 
+
+#### Cell plugin "default"
+
 `"default"` plugin render the cell value and has no options.
+
+
+#### Cell plugin: create custom
 
 ```javascript
 // example: "date" display.
@@ -495,11 +565,17 @@ $.fn.datagrid( "plugin", "cell", "date-us", "date", { format: "MM/DD/YYYY" } );
 
 `sorter` plugin is used to display information on sorted column (icons, chevron, arrow, ... or what you want !).
 
+
+#### Sorter plugin "default"
+
 `"default"` plugin options are `{ up: " ↑", down: " ↓" }`.
 
 In the callback, `this` is the `$(th)`. You don't need to return value. Use `this` to change the `<th>` content.
 
 Column title is already displayed when callback is executed. You can use `this.html()` to get title.
+
+
+#### Sorter plugin: create custom
 
 You can extend `"default"` plugin like this
 
@@ -526,6 +602,9 @@ You don't need to handle `click` events on sortable columns. `sorter` plugins ar
 ## Pager plugin
 
 `pager` plugin is used to display pager section (returns HTML).
+
+
+#### Pager plugin "default"
 
 `"default"` plugin handle `click` events on page items. 
 
@@ -572,6 +651,9 @@ Default options are
     behavior: false
 }
 ```
+
+
+#### Pager plugin: create custom
 
 You can write you own pager from scratch with a callback function.
 

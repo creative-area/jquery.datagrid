@@ -150,8 +150,7 @@ $( document ).ready( function() {
 	$eventsInfo = $( "#dg-demo-events-info" );
 	$eventsArea = $( "#dg-demo-events-area" );
 	var dg4 = $( "#dg-demo-events" ).datagrid({
-		data: countries,
-		// url: "data/demo-simple.php",
+		url: "data/demo-simple.php",
 		col: [{
 			field: "Continent",
 			title: "Continent",
