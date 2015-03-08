@@ -85,8 +85,9 @@
                 };
             }
         },
-        sortByKey: function( array, key, comparator ) {
-            return array.sort(function(a, b) {
+        // sort array of objects by key
+        sortByKey: function( data, key, comparator ) {
+            return data.sort(function(a, b) {
                 var x = a[key];
                 var y = b[key];
                 if ( 1*x - x === 0 ) {
@@ -97,6 +98,22 @@
                 }
                 return ((x < y) ? -comparator : ((x > y) ? comparator : 0));
             });
+        },
+        // filter data
+        filter: function( data, filters ) {
+            var filteredData = [];
+            for ( var i=0 ; i<data.length ; i++ ) {
+                var good = true;
+                for ( var filter in filters ) {
+                    if ( "" + filters[ filter ] !== "" ) {
+                        good = good && ( "" + data[ i ][ filter ] === "" + filters[ filter ] );
+                    }
+                }
+                if ( good ) {
+                    filteredData.push( data[ i ] );
+                }
+            }
+            return filteredData;
         }
     };
 
@@ -119,7 +136,7 @@
                     var direction = params[ datagrid.settings.paramsMapping.direction ];
                     var options = {
                         sorter: tools.sortByKey,
-                        filter: false,
+                        filter: tools.filter,
                         data: datagrid.settings.data
                     };
                     $.extend( options, sourceOptions );
