@@ -3,7 +3,7 @@ jquery.datagrid
 
 *- version 0.2*
 
-- Fetch data from any source: static data, ajax, deferred function or plugin
+- Fetch data from any source: local data or remote data (using ajax, deferred function or plugin)
 - Render a simple HTML Table easy to style (no imposed css)
 - Simple columns definition
 - Semi-automatic sorter and pager (for remote data, you need to code server side)
@@ -44,7 +44,7 @@ $( document ).ready( function() {
 </script>
 ```
 
-Another simple example with **static data**
+Another simple example with **local data**
 
 ```html
 <script type="text/javascript" src="jquery.datagrid.js"></script>
@@ -119,7 +119,7 @@ List of `option names` ( *expected values* )
 
 - `source` ( *string* || *object* || *function* ) : data fetching method: function, plugin name (string) or plugin name with config (object). - *see __Source Plugins__ below*
 - `url`  ( *string* ) : server url where data are fetch (with POST params data). Used by `default` source.
-- `data` ( *false* || *array* ) : static data (no remote fetch). If not `false`, `source` will be automatically set to `"data"`.
+- `data` ( *false* || *array* ) : local data (no remote fetch). If not `false`, `source` will be automatically set to `"data"`.
 - `autoload` ( *boolean* ) : auto load data. If set to `false`, you need to load manualy the data with `datagrid.fetch()` method.
 - `paramsDefault` ( *object* ) : default params added to the data request.
 - `paramsMapping` ( *object* ) : you can map param names used for paging and sorting (keys used: see default value).
@@ -484,7 +484,7 @@ To display the HTML table, you need to call datagrid `render( data )` method.
 
 #### Source plugin "data"
 
-`"data"` plugin is used for static data. You can change sorter and filter functions by your own with `sorter` and `filter` options. If `data` option is filled, it will be used instead of datagrid `data` option.
+`"data"` plugin is used for local data. You can change sorter and filter functions by your own with `sorter` and `filter` options. If `data` option is filled, it will be used instead of datagrid `data` option. All options are optional.
 
 ```javascript
 $( selector ).datagrid({
@@ -501,7 +501,7 @@ $( selector ).datagrid({
                 // `filters`: object of attribute-value pairs
                 return filteredData;
             },
-            data: [] // static array of object (attribute-value pairs)
+            data: [] // array of object (attribute-value pairs)
         }
     }
 });
