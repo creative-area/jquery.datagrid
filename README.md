@@ -670,3 +670,8 @@ $.fn.datagrid( "plugin", "pager", "scratch-pager", function( page, lastpage, pag
 ```
 
 You don't need to handle `click` events on page items: they are automatically attached on elements with `datagrid-page` class. You just need to set target page with `data-page` attribute.
+
+
+# License
+
+jquery.datagrid is distributed under MIT License.

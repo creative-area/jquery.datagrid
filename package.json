@@ -1,23 +1,33 @@
 {
         "name": "jquery.datagrid",
+        "version": "0.2",
         "title": "jquery datagrid",
-        "description": "datagrid (jquery plugin)",
-        "author": "Creative Area",
+        "description": "A jquery plugin to render datagrid. Works with local or remote data. Designed to be adaptive, simple to use and extendable.",
+        "author": "Creative Area <contact@creative-area.net> (http://www.creative-area.net/)",
         "repository": {
                 "type" : "git",
                 "url" : "https://github.com/creative-area/jquery.datagrid.git"
         },
-        "homepage": "https://github.com/creative-area/jquery.datagrid",
-        "version": "0.1",
-        "devDependencies": {
-                "grunt": "~0.4.1",
-                "grunt-cli": "~0.1.7",
-                "grunt-contrib-jshint": "~0.4.3",
-                "grunt-contrib-concat": "~0.3.0",
-                "grunt-contrib-uglify": "~0.2.0",
-                "grunt-contrib-coffee": "~0.7.0"
-        },
-        "scripts": {
-                "test": "grunt travis --verbose"
-        }
+        "homepage": "http://labs.creative-area.net/jquery.datagrid/",
+        "main": "jquery.datagrid.js",
+        "keywords": [
+                "jquery-plugin",
+                "ecosystem:jquery",
+                "jquery",
+                "plugin",
+                "datagrid",
+                "jquery-datagrid",
+                "jquery.datagrid",
+                "table",
+                "data",
+                "datatable",
+                "ajax",
+                "local data",
+                "remote data"
+        ],
+        "licenses": [
+                {
+                        "type": "MIT"
+                }
+        ]
 }
