@@ -1,8 +1,6 @@
 jquery.datagrid
 ===============
 
-*- version 0.2*
-
 - Fetch data from any source: local data or remote data (using ajax, deferred function or plugin)
 - Render a simple HTML Table easy to style (no imposed css)
 - Simple columns definition
@@ -11,9 +9,19 @@ jquery.datagrid
 - Events on each step (you do what you want with your data)
 - Convert form elements (input, select) into automatic filters (magic!)
 
+
 # Demo
 
 <a href="http://labs.creative-area.net/jquery.datagrid/demo/">jquery.datagrid demo</a>
+
+
+# Install
+
+`bower install jquery.datagrid`
+
+or
+
+`npm install jquery.datagrid`
 
 
 # Configuration
