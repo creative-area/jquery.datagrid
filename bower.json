@@ -1,6 +1,6 @@
 {
         "name": "jquery.datagrid",
-        "version": "0.2",
+        "version": "0.2.1",
         "main": "jquery.datagrid.js",
         "homepage": "http://labs.creative-area.net/jquery.datagrid/",
         "authors": [
