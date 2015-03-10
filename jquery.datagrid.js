@@ -1,7 +1,7 @@
 /*
  *  Project: jquery.datagrid
  *  Description: datagrid
- *  Version: 0.1
+ *  Version: 0.2
  *  Author: Creative Area www.creative-area.net
  *  License: Dual licensed under the MIT or GPL Version 2 licenses.
  */
