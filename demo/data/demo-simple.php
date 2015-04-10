@@ -13,7 +13,7 @@ $aFilters = array();
 $sql_filters = '';
 
 $Continent = ( isset($_POST['Continent']) ) ? $_POST['Continent'] : false;
-$ContinentAllowed = array( 
+$ContinentAllowed = array(
 	"Asia",
 	"Europe",
 	"North America",
@@ -74,7 +74,7 @@ $result['total'] = $row_total[0];
 
 // data
 $sql = '
-	SELECT *
+	SELECT *, ( IF( Continent = "Asia", "Y", "N" ) ) AS is_asia
 	FROM Country
 	'.$sql_filters.'
 	'.( ( !empty($orderby) ) ? 'ORDER BY '.mysql_real_escape_string($orderby).' '.mysql_real_escape_string($direction).'' : '' ).'

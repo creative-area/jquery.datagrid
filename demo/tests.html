@@ -6,10 +6,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="jQuery Datagrid">
 	<meta name="author" content="Creative Area">
-	
+
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
-	
+
 	<script type="text/javascript" src="../jquery.datagrid.js"></script>
 	<script type="text/javascript" src="../plugins/jquery.datagrid.bootstrap3.js"></script>
 	<script type="text/javascript" src="countries.js"></script>
@@ -20,53 +20,67 @@
 		// tests
 		$( "#dg-test" ).datagrid({
 			// data: countries,
-			source: {
-				data: {
-					data: countries,
-					filter: function( data, filters ) {
-						// console.log( filters );
-						var filteredData = [];
-						for ( var i=0 ; i<data.length ; i++ ) {
-							var good = true;
-							if ( filters.Continent && filters.Continent !== "" ) {
-								good = good && ( "" + data[ i ].Continent === "" + filters.Continent );
-							}
-							if ( filters.PopulationInterval && filters.PopulationInterval !== "" ) {
-								if ( filters.PopulationInterval === "1" && 1*data[ i ].Population > 1000000 ) {
-									good = false;
-								} else if ( filters.PopulationInterval === "2" && ( 1*data[ i ].Population <= 1000000 || 1*data[ i ].Population >= 100000000 ) ) {
-									good = false;
-								} else if ( filters.PopulationInterval === "3" && 1*data[ i ].Population < 100000000 ) {
-									good = false;
-								}
-							}
-							if ( good ) {
-								filteredData.push( data[ i ] );
-							}
-						}
-						return filteredData;
-					}
-					// ,
-					// sorter: function( data, key, comparator ) {
-					// 	return data;
-					// }
-				}
-			},
-			// url: "data/demo-simple.php",
 			// source: {
-			// 	"post": {
-			// 		url: "data/demo-simple.php"
+			// 	data: {
+			// 		data: countries,
+			// 		filter: function( data, filters ) {
+			// 			// console.log( filters );
+			// 			var filteredData = [];
+			// 			for ( var i=0 ; i<data.length ; i++ ) {
+			// 				var good = true;
+			// 				if ( filters.Continent && filters.Continent !== "" ) {
+			// 					good = good && ( "" + data[ i ].Continent === "" + filters.Continent );
+			// 				}
+			// 				if ( filters.PopulationInterval && filters.PopulationInterval !== "" ) {
+			// 					if ( filters.PopulationInterval === "1" && 1*data[ i ].Population > 1000000 ) {
+			// 						good = false;
+			// 					} else if ( filters.PopulationInterval === "2" && ( 1*data[ i ].Population <= 1000000 || 1*data[ i ].Population >= 100000000 ) ) {
+			// 						good = false;
+			// 					} else if ( filters.PopulationInterval === "3" && 1*data[ i ].Population < 100000000 ) {
+			// 						good = false;
+			// 					}
+			// 				}
+			// 				if ( good ) {
+			// 					filteredData.push( data[ i ] );
+			// 				}
+			// 			}
+			// 			return filteredData;
+			// 		}
+			// 		// ,
+			// 		// sorter: function( data, key, comparator ) {
+			// 		// 	return data;
+			// 		// }
 			// 	}
 			// },
+			url: "data/demo-simple.php",
+			source: {
+				"post": {
+					url: "data/demo-simple.php"
+				}
+			},
 			col: [{
 				field: "Continent",
 				title: "Continent",
 				sortable: true,
 				// render: "fa-button"
 				render: { "fa-button" : {
-					style: "default",
+					style: function( data ) {
+						return ( data.value === "Asia" ) ? "success" : "default";
+					},
 					size: "xs",
 					icon: "plane"
+				} }
+			},{
+				field: "is_asia",
+				title: "Is Asia",
+				sortable: true,
+				render: { "fa-button-yn" : {
+					style: function( data ) {
+						return ( data.row.Continent === "Asia" ) ? "success" : "default";
+					},
+					size: "xs",
+					iconOn: "plane",
+					iconOff: "info"
 				} }
 			},{
 				field: "Name",
@@ -96,22 +110,22 @@
 
 	});
 	</script>
-	
+
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
 	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.min.css" rel="stylesheet">
 	<link href="http://labs.creative-area.net/css/prettify.css" rel="stylesheet">
-	
+
 	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 	<!--[if lt IE 9]>
 	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
-	
+
 	<style>
 	a { cursor: pointer;}
 	.dg div span { cursor: pointer;}
 	</style>
 	</head>
-	
+
 	<body>
 		<div class="container">
 			<h1>jQuery datagrid <small>tests</small></h1>
@@ -123,10 +137,10 @@
 							<div class="form-group" style="width:115px;">
 								<label class="sr-only" for="ContinentDemoFilters">Continent</label>
 								<select name="Continent" id="ContinentDemoFilters" class="form-control">
-									<option value="">Continents - all</option>
+									<option value="" selected>Continents - all</option>
 									<option value="Africa">Africa</option>
 									<option value="Antarctica">Antarctica</option>
-									<option value="Asia" selected>Asia</option>
+									<option value="Asia">Asia</option>
 									<option value="Europe">Europe</option>
 									<option value="North America">North America</option>
 									<option value="Oceania">Oceania</option>

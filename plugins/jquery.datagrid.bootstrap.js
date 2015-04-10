@@ -1,7 +1,7 @@
 /**
  * Bootstrap plugin for jquery.datagrid
- * Version: 0.1
- * 
+ * Version: 0.1.1
+ *
  * Copyright (c) 2011 Creative Area
  * Dual licensed under the MIT or GPL Version 2 licenses.
  *
@@ -39,7 +39,7 @@
 					options.up = "arrow-up";
 					options.down = "arrow-down";
 				break;
-				
+
 				case "load":
 					options.up = "upload";
 					options.down = "download";
@@ -79,6 +79,29 @@
 			attrContainer: { "class": "pagination pagination-right" }
 		});
 
+		// render button helper
+		var renderButton = function( renderOptions ) {
+			var options = {
+				classes: false,
+				css: false,
+				value: ""
+			};
+			if ( renderOptions ) {
+				$.extend( options, renderOptions );
+			}
+			var html = "";
+			html += "<button";
+			if ( options.classes ) {
+				html += " class=\"" + options.classes + "\"";
+			}
+			if ( options.css ) {
+				html += " css=\"" + options.css + "\"";
+			}
+			html += ">";
+			html += options.value;
+			html += "</button>";
+			return html;
+		};
 
 		// cell plugins
 		var cellButton = function( data, buttonOptions ) {
@@ -86,22 +109,105 @@
 				style: false, // "primary", "info", "success", "warning", "danger", "inverse"
 				size: false, // "lg", "sm", "xs"
 				classes: false, // add css class
+				css: false, // add css style
 				icon: false,
 				value: data.value
 			};
 			if ( buttonOptions ) {
 				$.extend( options, buttonOptions );
 			}
-			return "<button class='btn" 
-				+ ( (options.style) ? " btn-"+options.style : "" ) 
-				+ ( (options.size) ? " btn-"+options.size : "" ) 
-				+ ( (options.classes) ? " "+options.classes : "" ) 
-				+ "'>" 
-				+ ( (options.icon) ? "<i class='icon-" + options.icon + ( (options.style) ? " icon-white" : "" ) + "'></i> " : "" ) 
-				+ options.value + "</button>";
+			for ( var p in options ) {
+				if ( $.type( options[ p ] ) === 'function' ) {
+					options[ p ] = options[ p ]( data );
+				}
+			}
+			var renderOptions = {
+				classes: "btn",
+				css: options.css,
+				value: ""
+			};
+			if ( options.style ) {
+				renderOptions.classes += " btn-" + options.style;
+			}
+			if ( options.size ) {
+				renderOptions.classes += " btn-" + options.size;
+			}
+			if ( options.classes ) {
+				renderOptions.classes += " " + options.classes;
+			}
+			if ( options.icon ) {
+				renderOptions.value += "<i class=\"icon-" + options.icon + ( ( options.style ) ? " icon-white" : "" ) + "\"></i> ";
+			}
+			renderOptions.value += options.value;
+			return renderButton( renderOptions );
 		}
-		
+
 		$.fn.datagrid( "plugin", "cell", "bootstrap-button", cellButton );
+
+
+		// boolean buttons
+		var booleanCellButton = function( data, paramOptions ) {
+			var options = {
+				styleOn: "success", // "default", "primary", "info", "success", "warning", "danger", "inverse"
+				styleOff: "warning",
+				style: false, // shortcut for "styleOn" = "styleOff" = "style"
+				classes: false,
+				css: false, // add css style
+				valueOn: "1",
+				displayOn: "yes",
+				displayOff: "no",
+				display: false, // shortcut for "displayOn" = "displayOff" = "display"
+				iconOn: false,
+				iconOff: false,
+				icon: false, // shortcut for "iconOn" = "iconOff" = "icon"
+				size: false // "large", "small", "mini"
+			};
+			if ( paramOptions ) {
+				$.extend( options, paramOptions );
+			}
+			if ( options.style !== false ) {
+				options.styleOn = options.style;
+				options.styleOff = options.style;
+			}
+			if ( options.display !== false ) {
+				options.displayOn = options.display;
+				options.displayOff = options.display;
+			}
+			if ( options.icon !== false ) {
+				options.iconOn = options.icon;
+				options.iconOff = options.icon;
+			}
+			for ( var p in options ) {
+				if ( $.type( options[ p ] ) === 'function' ) {
+					options[ p ] = options[ p ]( data );
+				}
+			}
+			var isOnOff = ( data.value == options.valueOn ) ? "On" : "Off";
+			var renderOptions = {
+				classes: "btn",
+				css: options.css,
+				value: ""
+			};
+			if ( options[ "style" + isOnOff ] ) {
+				renderOptions.classes += " btn-" + options[ "style" + isOnOff ];
+			}
+			if ( options.size ) {
+				renderOptions.classes += " btn-" + options.size;
+			}
+			if ( options.classes ) {
+				renderOptions.classes += " " + options.classes;
+			}
+			if ( options[ "icon" + isOnOff ] ) {
+				renderOptions.value += "<i class=\"icon-" + options[ "icon" + isOnOff ] + ( ( options[ "style" + isOnOff ] ) ? " icon-white" : "" ) + "\"></i> ";
+			}
+			renderOptions.value += options[ "display" + isOnOff ];
+			return renderButton( renderOptions );
+		}
+
+		$.fn.datagrid( "plugin", "cell", "bootstrap-button-boolean", booleanCellButton );
+		$.fn.datagrid( "plugin", "cell", "bootstrap-button-yn", "bootstrap-button-boolean", {
+			valueOn: "Y",
+		} );
 
 	}
 })(jQuery);

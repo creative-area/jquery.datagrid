@@ -62,6 +62,8 @@ Extend `"bootstrap"` with `options = { attrUl: { "class": "pagination pagination
 
 ### cell
 
+All cell plugin option can be set by a `string` or a `function` (must return expected option value and has `data` as argument, same as column render callback function).
+
 `bootstrap-button`
 
 Render a button with an optional icon (from glyphicon or font-awesome)
@@ -72,6 +74,7 @@ options = {
 	style: false, // "primary", "info", "success", "warning", "danger", "inverse"
 	size: false, // "lg", "sm", "xs"
 	classes: false, // add css class
+	css: false, // add css style
 	icon: false,
 	value: data.value
 }
@@ -80,6 +83,41 @@ options = {
 `fa-button`
 
 Extend `"bootstrap-button"` with `options = { "icons": "fa" }`
+
+`bootstrap-button-boolean`
+
+Render a button with an optional icon (from glyphicon or font-awesome). Adapt the button according to the cell value (`value` equals `valueOn` or not).
+
+```javascript
+options = {
+	icons: "glyphicon", // "glyphicon", "fa" (font-awesome)
+	styleOn: "success", // "default", "primary", "info", "success", "warning", "danger", "inverse"
+	styleOff: "warning",
+	style: false, // shortcut for "styleOn" = "styleOff" = "style"
+	classes: false, // add css class
+	css: false, // add css style
+	valueOn: "1", // "value" checked to select options "On" (else select options "Off")
+	displayOn: "yes", // what is displayed if value == valueOn
+	displayOff: "no", // what is displayed if value <> valueOn
+	display: false, // shortcut for "displayOn" = "displayOff" = "display"
+	iconOn: false,
+	iconOff: false,
+	icon: false, // shortcut for "iconOn" = "iconOff" = "icon"
+	size: false // "lg", "sm", "xs"
+}
+```
+
+`bootstrap-button-yn`
+
+Extend `"bootstrap-button"` with `options = { "valueOn": "Y" }`
+
+`fa-button-boolean`
+
+Extend `"bootstrap-button-boolean"` with `options = { "icons": "fa" }`
+
+`fa-button-yn`
+
+Extend `"bootstrap-button-boolean"` with `options = { "icons": "fa", "valueOn": "Y" }`
 
 ----
 
@@ -143,6 +181,8 @@ Extend `"bootstrap"` with `options = { attrUl: { "class": "pagination pagination
 
 ### cell
 
+All cell plugin option can be set by a `string` or a `function` (must return expected option value and has `data` as argument, same as column render callback function).
+
 `bootstrap-button`
 
 Render a button with an optional icon
@@ -150,9 +190,36 @@ Render a button with an optional icon
 ```javascript
 options = {
 	style: false, // "primary", "info", "success", "warning", "danger", "inverse"
-	size: false, // "lg", "sm", "xs"
+	size: false, // "large", "small", "mini"
 	classes: false, // add css class
+	css: false, // add css style
 	icon: false,
 	value: data.value
 }
 ```
+
+`bootstrap-button-boolean`
+
+Render a button with an optional icon. Adapt the button according to the cell value (`value` equals `valueOn` or not).
+
+```javascript
+options = {
+	styleOn: "success", // "primary", "info", "success", "warning", "danger", "inverse"
+	styleOff: "warning",
+	style: false, // shortcut for "styleOn" = "styleOff" = "style"
+	classes: false, // add css class
+	css: false, // add css style
+	valueOn: "1", // "value" checked to select options "On" (else select options "Off")
+	displayOn: "yes", // what is displayed if value == valueOn
+	displayOff: "no", // what is displayed if value <> valueOn
+	display: false, // shortcut for "displayOn" = "displayOff" = "display"
+	iconOn: false,
+	iconOff: false,
+	icon: false, // shortcut for "iconOn" = "iconOff" = "icon"
+	size: false // "large", "small", "mini"
+}
+```
+
+`bootstrap-button-yn`
+
+Extend `"bootstrap-button"` with `options = { "valueOn": "Y" }`
