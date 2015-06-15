@@ -1,6 +1,6 @@
 {
         "name": "jquery.datagrid",
-        "version": "0.2.2",
+        "version": "0.2.3",
         "title": "jquery datagrid",
         "description": "A jquery plugin to render datagrid. Works with local or remote data. Designed to be adaptive, simple to use and extendable.",
         "author": "Creative Area <contact@creative-area.net> (http://www.creative-area.net/)",
