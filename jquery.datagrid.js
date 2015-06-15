@@ -449,7 +449,7 @@
                 }
                 if ( !isLoaded ) {
                     // no plugin found
-                    self._onError( "Unknown sorter", JSON.stringify( self.settings.source ) );
+                    self._onError( "Unknown source", JSON.stringify( self.settings.source ) );
                     return false;
                 }
             }
@@ -678,7 +678,7 @@
                 }
                 if ( !isLoaded ) {
                     // no plugin found
-                    self._onError( "Unknown sorter", JSON.stringify( self.settings.pager ) );
+                    self._onError( "Unknown pager", JSON.stringify( self.settings.pager ) );
                     return false;
                 }
             }
