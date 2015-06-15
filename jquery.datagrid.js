@@ -36,7 +36,7 @@
                 direction: "direction"
             },
             parse: function( data ) {
-                if ( $.type( data ) === 'string' ) {
+                if ( $.type( data ) === "string" ) {
                     return JSON.parse( data );
                 } else {
                     return data;
@@ -71,14 +71,14 @@
     var tools = {
         // pager helper
         getPagerLimits: function( behavior, page, lastpage ) {
-            if ( $.type( behavior ) === 'string' ) {
+            if ( $.type( behavior ) === "string" ) {
                 var oldbehavior = behavior;
                 behavior = {};
                 behavior[ oldbehavior ] = {};
             }
 
-            if ( behavior[ "sliding" ] ) {
-                var pages = ( behavior[ "sliding" ][ "pages" ] ) ? behavior[ "sliding" ][ "pages" ] : 3;
+            if ( behavior.sliding ) {
+                var pages = ( behavior.sliding.pages ) ? behavior.sliding.pages : 3;
                 return {
                     minpage: Math.max( 1, Math.min( page - pages, lastpage - ( 2 * pages ) ) ),
                     maxpage: Math.min( lastpage, Math.max( page + pages, ( 2 * pages ) + 1 ) )
@@ -300,7 +300,7 @@
         this._params[ this.settings.paramsMapping.paging ] = 15; // 0 for no paging
         this._params[ this.settings.paramsMapping.orderby ] = "";
         this._params[ this.settings.paramsMapping.direction ] = "";
-        
+
         $.extend( this._params, this.settings.paramsDefault );
 
         // backup default params for reset
@@ -513,7 +513,7 @@
 
                                 var ascendant = !self.settings.col[i].sortableDefaultAsc;
 
-                                th.addClass(  pluginName + "-sortable-" + (ascendant ? 'asc' : 'desc') );
+                                th.addClass(  pluginName + "-sortable-" + (ascendant ? "asc" : "desc") );
 
                                 // event : sorter
                                 self.getSorter( th, ascendant );
@@ -738,7 +738,7 @@
                                 if ( this.checked ) self._params[ $element[0].name ].push( $(this).val() );
                             });
                         } else {
-                            self._params[ $element[0].name ] = ( $element[0].checked ) ? $element.val() : '';
+                            self._params[ $element[0].name ] = ( $element[0].checked ) ? $element.val() : "";
                         }
                     break;
 
