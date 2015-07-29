@@ -252,17 +252,18 @@
                     if ( options.prevPage ) {
                         pagerExtremes( ( page == 1 ), page - 1, options.prevPage );
                     }
-                    for ( var i = pagerLimits.minpage ; i <= pagerLimits.maxpage ; i++ ) {
-                        container.append(
-                            $("<" + options.item + ">", {
-                                data: { "page": i },
-                                attr: ( page == i ) ? options.attrItemActive : {},
-                                "class": pluginName + "-page"
-                            })
-                            .append(
-                                ( options.link ) ? $("<a>").html( options.before + i + options.after ) : options.before + i + options.after
-                            )
-                        );
+                    for (var i = pagerLimits.minpage; i <= pagerLimits.maxpage; i++) {
+                        var pageElem = $("<" + options.item + ">", {
+                            data: {"page": i}
+                        });
+                        if (page === i) {
+                            pageElem.attr(options.attrItemActive);
+                        }
+                        pageElem.addClass(pluginName + "-page");
+                        pageElem.append(
+                                (options.link) ? $("<a>").html(options.before + i + options.after) : options.before + i + options.after
+                                );
+                        container.append(pageElem);
                     }
                     if ( options.nextPage ) {
                         pagerExtremes( ( page == lastpage ), page + 1, options.nextPage );
@@ -866,3 +867,4 @@
     };
 
 }(jQuery, window, document));
+
