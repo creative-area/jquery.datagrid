@@ -276,7 +276,7 @@
         };
 
     // post alias
-    plugins.source.post = plugins.source.default;
+    plugins.source['post'] = plugins.source['default'];
 
     // The actual plugin constructor
     function Plugin( element, options ) {
